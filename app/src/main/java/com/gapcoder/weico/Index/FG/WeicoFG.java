@@ -161,7 +161,7 @@ public class WeicoFG extends BaseFG {
         });
         msg = new QBadgeView(getActivity());
         msg.bindTarget(target).setBadgeGravity(Gravity.END | Gravity.TOP);
-        getMessage();
+       // getMessage();
         rf.autoRefresh();
     }
 

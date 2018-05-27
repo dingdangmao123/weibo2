@@ -152,7 +152,7 @@ public class Comment extends Base {
                 UI(new Runnable() {
                     @Override
                     public void run() {
-                        edit.setHint("输入评论(200以内)");
+                        edit.setHint("输入评论");
                         edit.setText("");
                         hintKeyboard();
                         T.show(Comment.this, r.getMsg());
@@ -204,7 +204,10 @@ public class Comment extends Base {
         rf.setOnLoadmoreListener(new OnLoadmoreListener() {
             @Override
             public void onLoadmore(RefreshLayout refreshlayout) {
-                Refresh(0);
+                if(data.getComment().size()>0)
+                    Refresh(0);
+                else
+                    rf.finishLoadmore();
             }
         });
         getWeico();
@@ -255,6 +258,7 @@ public class Comment extends Base {
                 id = list.get(0).getId();
             }
         } else {
+
             id = data.getComment().get(list.size() - 1).getId();
         }
 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -49,6 +50,8 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
     private List<WeicoModel.InnerBean> data;
 
     private GridAdapter mAdapter;
+
+    Typeface typeface;
     LinkText parse;
 
     public WeicoAdapter(List<WeicoModel.InnerBean> data, Context context) {
@@ -56,14 +59,15 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
         this.mContext = context;
         parse = new LinkText(context);
         mAdapter= new GridAdapter(context);
+        typeface =Typeface.createFromAsset(context.getAssets(), "fz.TTF");
     }
 
     @Override
     public SnapViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //加载item 布局文件
         View view = LayoutInflater.from(mContext).inflate(R.layout.weicoitem, parent, false);
-        final SnapViewHolder h = new SnapViewHolder(view);
-        view.setOnClickListener(new View.OnClickListener() {
+        final SnapViewHolder h = new SnapViewHolder(view,typeface);
+        h.t4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(mContext, Comment.class);
@@ -97,6 +101,7 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
         h.t4.setText(parse.parse(m.getText()));
         h.t5.setText(String.valueOf(m.getComment()) + "评论");
         h.t6.setText(String.valueOf(m.getLove() + "赞"));
+
         String face=Config.face+m.getFace();
         if (h.face.getTag()!=null&&!face.equals((String) h.face.getTag()))
             h.face.setImageBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.face));
@@ -130,7 +135,7 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
         TextView t5;
         TextView t6;
 
-        public SnapViewHolder(View itemView) {
+        public SnapViewHolder(View itemView,Typeface tf) {
             super(itemView);
 
             Grid = (NineGridImageView) itemView.findViewById(R.id.NineGrid);
@@ -140,6 +145,12 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
             t4 = (TextView) itemView.findViewById(R.id.text);
             t5 = (TextView) itemView.findViewById(R.id.comment);
             t6 = (TextView) itemView.findViewById(R.id.like);
+
+            t1.setTypeface(tf);
+            t2.setTypeface(tf);
+            t4.setTypeface(tf);
+            t5.setTypeface(tf);
+            t6.setTypeface(tf);
 
         }
     }

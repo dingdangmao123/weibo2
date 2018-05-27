@@ -1,12 +1,21 @@
 package com.gapcoder.weico.General;
 
 import android.app.ActivityManager;
+import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.v4.view.LayoutInflaterCompat;
+import android.support.v4.view.LayoutInflaterFactory;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
 import android.support.v7.widget.Toolbar;
+import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.gapcoder.weico.Config;
 import com.gapcoder.weico.R;
@@ -25,6 +34,7 @@ public class Base extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        TypeFace();
         super.onCreate(savedInstanceState);
         ActivityList.add(this);
         setContentView();
@@ -37,6 +47,30 @@ public class Base extends AppCompatActivity {
         }
         init();
     }
+
+    void TypeFace(){
+
+        final Typeface typeface = Typeface.createFromAsset(getAssets(), "fz.TTF");
+
+        LayoutInflaterCompat.setFactory(LayoutInflater.from(this), new LayoutInflaterFactory()
+        {
+            @Override
+            public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
+            {
+                AppCompatDelegate delegate = getDelegate();
+                View view = delegate.createView(parent, name, context, attrs);
+
+                if ( view!= null && (view instanceof TextView))
+                {
+                    ((TextView) view).setTypeface(typeface);
+                }
+                return view;
+            }
+        });
+
+    }
+
+
     public void init(){
 
     }

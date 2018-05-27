@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -41,6 +42,7 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SnapView
     private LinkedList<Comm.InnerBean.CommentBean> comment;
     private HashMap<Integer,Comm.InnerBean.UserBean> user;
 
+    Typeface typeface;
 
     public CommentAdapter(Comm.InnerBean data, Context context) {
 
@@ -49,13 +51,14 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SnapView
         this.mContext = context;
         reply=new Reply(context);
         Log.i("tag","title");
+        typeface = Typeface.createFromAsset(context.getAssets(), "fz.TTF");
     }
 
     @Override
     public CommentAdapter.SnapViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         //加载item 布局文件
         View view = LayoutInflater.from(mContext).inflate(R.layout.commentitem , parent, false);
-        final CommentAdapter.SnapViewHolder h= new CommentAdapter.SnapViewHolder(view);
+        final CommentAdapter.SnapViewHolder h= new CommentAdapter.SnapViewHolder(view,typeface);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,12 +113,17 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SnapView
         TextView name;
         TextView time;
         TextView text;
-        public SnapViewHolder(View itemView) {
+        public SnapViewHolder(View itemView,Typeface tf) {
             super(itemView);
-            face=(ImageView) itemView.findViewById(R.id.iv);
+            face = (ImageView) itemView.findViewById(R.id.iv);
             name = (TextView) itemView.findViewById(R.id.name);
             time = (TextView) itemView.findViewById(R.id.time);
             text = (TextView) itemView.findViewById(R.id.text);
+
+
+            name.setTypeface(tf);
+            time.setTypeface(tf);
+            text.setTypeface(tf);
         }
     }
 }

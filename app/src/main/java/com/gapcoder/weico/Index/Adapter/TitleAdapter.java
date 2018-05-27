@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,9 +35,11 @@ public class TitleAdapter extends RecyclerView.Adapter<TitleAdapter.SnapViewHold
 
     private List<TitleModel.inner> data;
 
+    Typeface typeface;
     public TitleAdapter(List<TitleModel.inner> data, Context context) {
         this.data = data;
         this.context = context;
+        typeface =Typeface.createFromAsset(context.getAssets(), "fz.TTF");
     }
 
     @Override
@@ -44,6 +47,7 @@ public class TitleAdapter extends RecyclerView.Adapter<TitleAdapter.SnapViewHold
 
         View view = LayoutInflater.from(context).inflate(R.layout.titleitem, parent, false);
         final SnapViewHolder h= new SnapViewHolder(view);
+        h.t1.setTypeface(typeface);
         h.t1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

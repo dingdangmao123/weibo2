@@ -139,7 +139,8 @@ public class Account extends Base {
                 } else if (tmp.size() > 0) {
                     data.addAll(tmp);
                     int n = data.size() - cache;
-                    for (int i = 0; i < n; i++) {
+                    for (int i = 0; i < n; i++){
+
                         data.removeFirst();
                     }
                 }

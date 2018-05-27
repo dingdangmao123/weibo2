@@ -152,9 +152,9 @@
                 <Button
                     android:text="确定"
                     android:id="@+id/send"
+                    android:textColor="@color/text"
                     android:layout_marginLeft="10dp"
-                    android:background="@drawable/btn"
-                    android:textColor="@color/weicoBtn"
+                    android:background="@drawable/edit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>

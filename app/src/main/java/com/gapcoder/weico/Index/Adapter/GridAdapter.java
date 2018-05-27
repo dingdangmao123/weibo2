@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.gapcoder.weico.Config;
 import com.gapcoder.weico.Utils.Image;
 import com.jaeger.ninegridimageview.NineGridImageViewAdapter;
@@ -27,7 +28,10 @@ public class GridAdapter extends NineGridImageViewAdapter<String> {
         iv.setTag(Config.photo+photo);
         Log.i("tag", Config.photo+photo);
         Image.down((Activity) context, iv, Config.photo+photo,150,150);
-
+        //iv.setTag(Config.photo+photo);
+       // Glide.with(context)
+         //       .load(Config.photo+photo)
+           //     .into(iv);
     }
 
     @Override

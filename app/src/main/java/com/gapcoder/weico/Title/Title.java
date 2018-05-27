@@ -5,6 +5,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Menu;
+import android.widget.TextView;
 
 import com.gapcoder.weico.General.Base;
 import com.gapcoder.weico.General.SysMsg;
@@ -31,6 +32,9 @@ public class Title extends Base {
     TitleModel.inner title;
     int cache = 10;
     int id = 0;
+
+    @BindView(R.id.title)
+    TextView tv;
     @BindView(R.id.timeline)
     RecyclerView tl;
     @BindView(R.id.refreshLayout)
@@ -51,7 +55,7 @@ public class Title extends Base {
 
 
         title = new TitleModel.inner(getIntent().getIntExtra("id", 0), getIntent().getStringExtra("title"));
-        getSupportActionBar().setTitle(title.getTitle());
+        tv.setText(title.getTitle());
 
         adapter = new WeicoAdapter(data, this);
 

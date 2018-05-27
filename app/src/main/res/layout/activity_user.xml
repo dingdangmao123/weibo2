@@ -19,13 +19,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
     </android.support.v7.widget.Toolbar>
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:id="@+id/refreshLayout"
+    <ScrollView
         android:layout_marginTop="?attr/actionBarSize"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <LinearLayout
             android:orientation="vertical"
+            android:layout_marginBottom="30dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <LinearLayout
@@ -38,8 +38,8 @@
                 android:layout_height="wrap_content">
                 <ImageView
                     android:id="@+id/face"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_width="100dp"
+                    android:layout_height="100dp" />
                 <TextView
                     android:id="@+id/name"
                     android:layout_marginLeft="20dp"
@@ -201,6 +201,7 @@
                     android:textColor="@color/weicoBtn"
                     android:background="@drawable/btn"
                     android:layout_margin="10dp"
+                    android:padding="5dp"
                     android:id="@+id/send"
                     android:layout_width="0dp"
                     android:layout_weight="1"
@@ -208,6 +209,6 @@
             </LinearLayout>
 
         </LinearLayout>
-</com.scwang.smartrefresh.layout.SmartRefreshLayout>
+</ScrollView>
 
 </android.support.constraint.ConstraintLayout>

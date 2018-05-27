@@ -46,7 +46,7 @@
             android:theme="@style/AppTheme" />
         <activity
             android:name=".Account.Account"
-            android:label="个人微博" />
+            android:label="" />
         <activity
             android:name=".UserList.UserList"
             android:label="" />

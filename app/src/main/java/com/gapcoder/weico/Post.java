@@ -4,10 +4,14 @@ import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
@@ -22,6 +26,10 @@ import android.widget.TextView;
 import com.gapcoder.weico.General.Base;
 import com.gapcoder.weico.General.SysMsg;
 import com.gapcoder.weico.General.URLService;
+import com.gapcoder.weico.Index.Adapter.TitleAdapter;
+import com.gapcoder.weico.Index.Adapter.WeicoAdapter;
+import com.gapcoder.weico.Index.Model.TitleModel;
+import com.gapcoder.weico.Title.Title;
 import com.gapcoder.weico.Utils.Compress;
 import com.gapcoder.weico.Utils.Pool;
 import com.gapcoder.weico.Utils.T;
@@ -44,11 +52,13 @@ public class Post extends Base {
     EditText text;
 
     List<String> url = new ArrayList<>();
-    Grid adapter;
+    Adapter adapter;
+
     final int IMAGE = 0;
 
     @BindView(R.id.container)
-    GridView container;
+    RecyclerView container;
+
     @BindView(R.id.count)
     TextView count;
 
@@ -82,15 +92,9 @@ public class Post extends Base {
     @Override
     public void init() {
 
-        adapter = new Grid(url, this);
+        adapter = new Adapter(url, this);
+        container.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
         container.setAdapter(adapter);
-        container.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                url.remove(position);
-                adapter.notifyDataSetChanged();
-            }
-        });
     }
 
     void post() {
@@ -150,6 +154,7 @@ public class Post extends Base {
                 url.clear();
                 url.addAll(t);
                 adapter.notifyDataSetChanged();
+
             }
         }
     }
@@ -166,39 +171,61 @@ public class Post extends Base {
         }
     }
 
-    static class Grid extends BaseAdapter {
-        private List<String> url;
+    static class Adapter extends RecyclerView.Adapter<Adapter.SnapViewHolder> {
+
         private Context context;
 
-        public Grid(List<String> url, Context context) {
-            super();
+        private List<String> url;
+
+        Typeface typeface;
+        public Adapter(List<String> url, Context context) {
+
             this.url = url;
             this.context = context;
         }
 
         @Override
-        public int getCount() {
+        public SnapViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+
+            View view = LayoutInflater.from(context).inflate(R.layout.griditem, parent, false);
+
+            final SnapViewHolder  h=new SnapViewHolder(view);
+
+            h.iv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    int pos=h.getAdapterPosition();
+                    url.remove(pos);
+                    notifyDataSetChanged();
+                    return false;
+                }
+            });
+            return h;
+        }
+
+        @Override
+        public void onBindViewHolder(SnapViewHolder h, int position) {
+            h.iv.setImageBitmap(Compress.decodeFile(url.get(position), 100, 100));
+
+        }
+
+        @Override
+        public int getItemCount() {
             return url.size();
         }
 
-        @Override
-        public Object getItem(int position) {
-            return url.get(position);
-        }
+        static class SnapViewHolder extends RecyclerView.ViewHolder {
 
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
+            ImageView  iv;
 
-        @Override
-        public View getView(int p, View v, ViewGroup parent) {
-            if (v == null)
-                v = LayoutInflater.from(context).inflate(R.layout.griditem, null);
-            ImageView iv = (ImageView) v.findViewById(R.id.iv);
-            iv.setImageBitmap(Compress.decodeFile(url.get(p), 150, 150));
-            return v;
-        }
+            public SnapViewHolder(View itemView) {
+                super(itemView);
+                iv = (ImageView) itemView.findViewById(R.id.iv);
 
+            }
+        }
     }
+
+
+
 }

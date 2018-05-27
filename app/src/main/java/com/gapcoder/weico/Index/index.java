@@ -4,16 +4,24 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.LayoutInflaterCompat;
+import android.support.v4.view.LayoutInflaterFactory;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.AppCompatDelegate;
+import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.gapcoder.weico.Index.FG.AccountFG;
 import com.gapcoder.weico.Index.FG.TitleFG;
@@ -33,7 +41,6 @@ import q.rorbin.badgeview.QBadgeView;
 public class index extends AppCompatActivity {
 
     FragmentManager fm = getSupportFragmentManager();
-
     HashMap<Integer, Fragment> map = new HashMap<>();
     HashSet<Integer> flag = new HashSet<>();
 
@@ -47,6 +54,26 @@ public class index extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+
+        final Typeface typeface = Typeface.createFromAsset(getAssets(), "fz.TTF");
+
+        LayoutInflaterCompat.setFactory(LayoutInflater.from(this), new LayoutInflaterFactory()
+        {
+            @Override
+            public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
+            {
+                AppCompatDelegate delegate = getDelegate();
+                View view = delegate.createView(parent, name, context, attrs);
+
+                if ( view!= null && (view instanceof TextView))
+                {
+                    ((TextView) view).setTypeface(typeface);
+                }
+                return view;
+            }
+        });
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_index);
         ButterKnife.bind(this);
@@ -89,8 +116,8 @@ public class index extends AppCompatActivity {
         filter=new IntentFilter();
         filter.addAction("com.gapcoder.weico.MESSAGE");
         registerReceiver(receiver,filter);
-        Intent service=new Intent(this, MessageService.class);
-        startService(service);
+       // Intent service=new Intent(this, MessageService.class);
+        //startService(service);
     }
 
     private void hideFragments(FragmentTransaction transaction) {
@@ -103,6 +130,8 @@ public class index extends AppCompatActivity {
         }
 
     }
+
+
 
     @Override
     protected void onDestroy() {

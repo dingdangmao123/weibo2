@@ -47,24 +47,22 @@
             android:gravity="top"
             android:hint="分享新鲜事..."
             android:minLines="5"
-            android:textColor="@color/highlight"
-            android:textColorHint="@color/highlight"
+            android:textColor="@color/text"
             android:textCursorDrawable="@null" />
 
-        <GridView
-            android:numColumns="auto_fit"
-            android:id="@+id/container"
-            android:columnWidth="100dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </GridView>
+     <android.support.v7.widget.RecyclerView
+         android:id="@+id/container"
+         android:layout_margin="12dp"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"/>
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
         <ImageView
             android:clickable="true"
-            android:layout_margin="10dp"
+            android:layout_margin="12dp"
+            android:layout_gravity="center_vertical"
             android:id="@+id/select"
             android:background="@mipmap/ic_photo"
             android:scaleType="centerCrop"
@@ -75,9 +73,10 @@
             android:id="@+id/count"
             android:text="200"
             android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:gravity="right"
             android:layout_margin="10dp"
-            android:textColor="@color/highlight"
+            android:textColor="@color/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
         </LinearLayout>
