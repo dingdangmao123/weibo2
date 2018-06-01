@@ -28,6 +28,7 @@ import com.gapcoder.weico.Utils.Image;
 import com.gapcoder.weico.Utils.LinkText;
 import com.gapcoder.weico.Utils.T;
 import com.gapcoder.weico.Utils.Time;
+import com.gapcoder.weico.Views.NineView.NineView;
 import com.jaeger.ninegridimageview.NineGridImageView;
 import com.jaeger.ninegridimageview.NineGridImageViewAdapter;
 
@@ -99,20 +100,38 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
         h.t2.setText(Time.format(m.getTime()));
         h.t4.setMovementMethod(LinkMovementMethod.getInstance());
         h.t4.setText(parse.parse(m.getText()));
-        h.t5.setText(String.valueOf(m.getComment()) + "评论");
-        h.t6.setText(String.valueOf(m.getLove() + "赞"));
+
+        if(m.getComment()>0) {
+            h.t5.setText(String.valueOf(m.getComment()) + "评论");
+            h.t5.setVisibility(View.VISIBLE);
+        }else
+            h.t5.setVisibility(View.GONE);
+
+        if(m.getLove()>0) {
+            h.t6.setText(String.valueOf(m.getLove() + "赞"));
+            h.t6.setVisibility(View.VISIBLE);
+        }else
+            h.t6.setVisibility(View.GONE);
 
         String face=Config.face+m.getFace();
         if (h.face.getTag()!=null&&!face.equals((String) h.face.getTag()))
             h.face.setImageBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.face));
 
-        h.Grid.setAdapter(mAdapter);
-        h.Grid.setImagesData(new ArrayList(Arrays.asList(m.getPhoto().split(","))));
+        //h.Grid.setAdapter(mAdapter);
+        if(Config.mode) {
 
-        if(m.getPhoto().length()==0){
             h.Grid.setVisibility(View.GONE);
-        }else{
-            h.Grid.setVisibility(View.VISIBLE);
+
+        }else {
+
+            if (m.getPhoto().length() > 0)
+                h.Grid.setUrl((Activity) mContext, new ArrayList(Arrays.asList(m.getPhoto().split(","))));
+
+            if (m.getPhoto().length() == 0) {
+                h.Grid.setVisibility(View.GONE);
+            } else {
+                h.Grid.setVisibility(View.VISIBLE);
+            }
         }
 
         h.face.setTag(face);
@@ -127,7 +146,7 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
     static class SnapViewHolder extends RecyclerView.ViewHolder {
 
 
-        NineGridImageView Grid;
+        NineView Grid;
         ImageView face;
         TextView t1;
         TextView t2;
@@ -138,7 +157,7 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
         public SnapViewHolder(View itemView,Typeface tf) {
             super(itemView);
 
-            Grid = (NineGridImageView) itemView.findViewById(R.id.NineGrid);
+            Grid = (NineView) itemView.findViewById(R.id.NineGrid);
             face = (ImageView) itemView.findViewById(R.id.face);
             t1 = (TextView) itemView.findViewById(R.id.name);
             t2 = (TextView) itemView.findViewById(R.id.time);

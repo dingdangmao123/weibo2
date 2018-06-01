@@ -1,9 +1,14 @@
 package com.gapcoder.weico.General;
 
+import android.Manifest;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.LayoutInflaterCompat;
 import android.support.v4.view.LayoutInflaterFactory;
 import android.support.v7.app.ActionBar;
@@ -18,6 +23,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.gapcoder.weico.Config;
+import com.gapcoder.weico.Post;
 import com.gapcoder.weico.R;
 import com.gapcoder.weico.Utils.ActivityList;
 import com.gapcoder.weico.Utils.T;
@@ -31,6 +37,7 @@ import butterknife.ButterKnife;
 
 public class Base extends AppCompatActivity {
 
+    Runnable r=null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +56,6 @@ public class Base extends AppCompatActivity {
     }
 
     void TypeFace(){
-
         final Typeface typeface = Typeface.createFromAsset(getAssets(), "fz.TTF");
 
         LayoutInflaterCompat.setFactory(LayoutInflater.from(this), new LayoutInflaterFactory()
@@ -69,12 +75,9 @@ public class Base extends AppCompatActivity {
         });
 
     }
-
-
     public void init(){
 
     }
-
     public void setContentView(){
 
     }
@@ -139,6 +142,29 @@ public class Base extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        beforeFinish();
         ActivityList.remove(this);
+    }
+    public void beforeFinish(){
+
+    }
+
+    public void Permission(String p,Runnable r){
+        if (ContextCompat.checkSelfPermission(this, p) != PackageManager.PERMISSION_GRANTED) {
+            this.r=r;
+            ActivityCompat.requestPermissions(this, new String[]{p}, 1);
+        } else {
+            r.run();
+            r=null;
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED&&r!=null) {
+                    r.run();
+                    r=null;
+                }else
+                    T.show(this,"你没有允许权限");
     }
 }

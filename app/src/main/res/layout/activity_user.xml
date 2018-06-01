@@ -72,11 +72,7 @@
                     android:layout_height="24dp" />
 
             </LinearLayout>
-            <View android:layout_height="1dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_width="match_parent"
-                android:background="@color/gray"/>
+
 
             <LinearLayout
                 android:id="@+id/fansitem"
@@ -103,11 +99,7 @@
                     android:layout_height="24dp" />
 
            </LinearLayout>
-            <View android:layout_height="1dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_width="match_parent"
-                android:background="@color/gray"/>
+
             <LinearLayout
                 android:id="@+id/placeitem"
                 android:orientation="horizontal"
@@ -127,11 +119,7 @@
                     android:layout_height="wrap_content" />
             </LinearLayout>
 
-            <View android:layout_height="1dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_width="match_parent"
-                android:background="@color/gray"/>
+
 
             <LinearLayout
                 android:id="@+id/signitem"
@@ -152,11 +140,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>
-            <View android:layout_height="1dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_width="match_parent"
-                android:background="@color/gray"/>
+
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -176,11 +160,6 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp" />
                 </LinearLayout>
-            <View android:layout_height="1dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:layout_width="match_parent"
-                android:background="@color/gray"/>
 
             <LinearLayout
                 android:padding="15dp"

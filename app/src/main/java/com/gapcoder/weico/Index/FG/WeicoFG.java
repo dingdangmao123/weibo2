@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.gapcoder.weico.Config;
+import com.gapcoder.weico.Event.event_mode;
 import com.gapcoder.weico.General.MessageModel;
 import com.gapcoder.weico.General.SysMsg;
 import com.gapcoder.weico.General.URLService;
@@ -31,6 +32,10 @@ import com.zyyoona7.lib.EasyPopup;
 import com.zyyoona7.lib.HorizontalGravity;
 import com.zyyoona7.lib.VerticalGravity;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.LinkedList;
 
 import butterknife.BindView;
@@ -47,21 +52,23 @@ public class WeicoFG extends BaseFG {
     String type = "new";
     boolean reset = false;
     int current = 1;
-    int cache = 10;
+    int cache = 20;
     int id = 0;
 
     @BindView(R.id.timeline)
     RecyclerView tl;
+
     @BindView(R.id.refreshLayout)
     SmartRefreshLayout rf;
 
     @BindView(R.id.msg)
     TextView target;
+
     @BindView(R.id.weicoTitle)
     TextView title;
 
     public WeicoFG() {
-
+       // EventBus.getDefault().register(this);
     }
 
     View init(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -242,5 +249,16 @@ public class WeicoFG extends BaseFG {
                 tmp.clear();
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+       // EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void OnMode(event_mode ins){
+
     }
 }

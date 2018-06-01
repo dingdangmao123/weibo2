@@ -1,46 +1,41 @@
 package com.gapcoder.weico;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gapcoder.weico.General.Base;
 import com.gapcoder.weico.General.SysMsg;
 import com.gapcoder.weico.General.URLService;
-import com.gapcoder.weico.Index.Adapter.TitleAdapter;
-import com.gapcoder.weico.Index.Adapter.WeicoAdapter;
-import com.gapcoder.weico.Index.Model.TitleModel;
-import com.gapcoder.weico.Title.Title;
 import com.gapcoder.weico.Utils.Compress;
 import com.gapcoder.weico.Utils.Pool;
 import com.gapcoder.weico.Utils.T;
 import com.gapcoder.weico.Utils.Token;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
 import me.nereo.multi_image_selector.MultiImageSelector;
@@ -52,9 +47,12 @@ public class Post extends Base {
     EditText text;
 
     List<String> url = new ArrayList<>();
+    String weibo="";
     Adapter adapter;
 
     final int IMAGE = 0;
+
+    boolean ok=false;
 
     @BindView(R.id.container)
     RecyclerView container;
@@ -64,11 +62,10 @@ public class Post extends Base {
 
     @OnClick(R.id.select)
     void selectCheck() {
-        if (ContextCompat.checkSelfPermission(Post.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(Post.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-        } else {
-            select();
-        }
+        Permission(Manifest.permission.WRITE_EXTERNAL_STORAGE, () -> {
+            MultiImageSelector.create().count(9 - url.size())
+                    .start(this, IMAGE);
+        });
     }
 
     @OnTextChanged(R.id.text)
@@ -76,13 +73,6 @@ public class Post extends Base {
         int n = 200 - s.length();
         count.setText("" + n);
     }
-
-
-    void select() {
-        MultiImageSelector.create()
-                .start(this, IMAGE);
-    }
-
 
     @Override
     public void setContentView() {
@@ -95,6 +85,32 @@ public class Post extends Base {
         adapter = new Adapter(url, this);
         container.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
         container.setAdapter(adapter);
+
+        box();
+
+    }
+
+    void box() {
+        Pool.run(() -> {
+            File f = new File(getCacheDir(), "box");
+            if (!f.exists())
+                return;
+            try {
+                ObjectInputStream in = new ObjectInputStream(new FileInputStream(f));
+                inner ins = (inner) in.readObject();
+                text.setText(ins.text);
+                url.clear();
+                url.addAll(ins.getUrl());
+                f.delete();
+                UI(() -> {
+                    adapter.notifyDataSetChanged();
+                });
+
+            } catch (Exception e) {
+                Log.i("tag", e.toString());
+            }
+        });
+
     }
 
     void post() {
@@ -103,32 +119,38 @@ public class Post extends Base {
             T.show(Post.this, "你已经超过九张图片!");
             return;
         }
-        final String s = text.getText().toString();
-        if (s.length() > 200) {
+        weibo = text.getText().toString();
+        if (weibo.length() > 200) {
             T.show(Post.this, "超过长度限制");
             return;
         }
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
-                HashMap<String, String> map = new HashMap<>();
-                map.put("token", Token.token);
-                map.put("text", s);
-                final SysMsg r = URLService.upload("upload.php", map, url, SysMsg.class);
-                if (!check(r, null)) {
-                    return;
+
+        Pool.run(() -> {
+
+            HashMap<String, String> map = new HashMap<>();
+            map.put("token", Token.token);
+            map.put("text", weibo);
+
+            final SysMsg r = URLService.upload("upload.php", map, url, SysMsg.class);
+            UI(() -> {
+                T.show(Post.this, r.getMsg());
+            });
+
+            if (!r.getCode().equals(Config.SUCCESS)) {
+
+                inner ins = new inner(weibo, url);
+                try {
+                    ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(getCacheDir(), "box")));
+                    out.writeObject(ins);
+                    out.close();
+                } catch (Exception e) {
+
                 }
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
-                        T.show(Post.this, r.getMsg());
-                        text.setText("");
-                        url.clear();
-                        adapter.notifyDataSetChanged();
-                    }
-                });
             }
+
         });
+
+        finish();
     }
 
     @Override
@@ -139,19 +161,25 @@ public class Post extends Base {
 
     @Override
     public void onItemSelected(int id) {
-        if (id == R.id.TextOk)
+        if (id == R.id.TextOk) {
+            ok=true;
             post();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == IMAGE) {
             if (resultCode == RESULT_OK) {
                 List<String> t = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
                 if (t.size() == 0)
                     return;
-                url.clear();
+                if (t.size() + url.size() > 9) {
+                    T.show(Post.this, "图片不能超过九张");
+                    return;
+                }
                 url.addAll(t);
                 adapter.notifyDataSetChanged();
 
@@ -160,15 +188,24 @@ public class Post extends Base {
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        switch (requestCode) {
-            case IMAGE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
-                    select();
-                else
-                    T.show(Post.this, "你没有允许权限");
-                break;
-        }
+    public void beforeFinish() {
+
+        if(ok||!Config.box)
+            return ;
+
+        weibo=text.getText().toString();
+        if(weibo.length()==0&&url.size()==0)
+            return ;
+        Pool.run(()->{
+            inner ins = new inner(weibo, url);
+            try {
+                ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(getCacheDir(), "box")));
+                out.writeObject(ins);
+                out.close();
+            } catch (Exception e) {
+
+            }
+        });
     }
 
     static class Adapter extends RecyclerView.Adapter<Adapter.SnapViewHolder> {
@@ -178,6 +215,7 @@ public class Post extends Base {
         private List<String> url;
 
         Typeface typeface;
+
         public Adapter(List<String> url, Context context) {
 
             this.url = url;
@@ -189,24 +227,26 @@ public class Post extends Base {
 
             View view = LayoutInflater.from(context).inflate(R.layout.griditem, parent, false);
 
-            final SnapViewHolder  h=new SnapViewHolder(view);
+            final SnapViewHolder h = new SnapViewHolder(view);
 
-            h.iv.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    int pos=h.getAdapterPosition();
-                    url.remove(pos);
-                    notifyDataSetChanged();
-                    return false;
-                }
+            h.iv.setOnLongClickListener((View v) -> {
+                int pos = h.getAdapterPosition();
+                url.remove(pos);
+                notifyDataSetChanged();
+                return false;
             });
+
             return h;
         }
 
         @Override
-        public void onBindViewHolder(SnapViewHolder h, int position) {
-            h.iv.setImageBitmap(Compress.decodeFile(url.get(position), 100, 100));
-
+        public void onBindViewHolder(final SnapViewHolder h, final int position) {
+            Pool.run(() -> {
+                final Bitmap bit = Compress.decodeFile(url.get(position), 100, 100);
+                ((Activity) context).runOnUiThread(() -> {
+                    h.iv.setImageBitmap(bit);
+                });
+            });
         }
 
         @Override
@@ -216,7 +256,7 @@ public class Post extends Base {
 
         static class SnapViewHolder extends RecyclerView.ViewHolder {
 
-            ImageView  iv;
+            ImageView iv;
 
             public SnapViewHolder(View itemView) {
                 super(itemView);
@@ -224,8 +264,35 @@ public class Post extends Base {
 
             }
         }
+
+
     }
 
+    public static class inner implements Serializable {
 
+        private String text;
+        private List<String> url;
+
+        public inner(String text, List<String> url) {
+            this.text = text;
+            this.url = url;
+        }
+
+        public String getText() {
+            return text;
+        }
+
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public List<String> getUrl() {
+            return url;
+        }
+
+        public void setUrl(List<String> url) {
+            this.url = url;
+        }
+    }
 
 }

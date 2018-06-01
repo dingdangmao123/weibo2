@@ -16,6 +16,7 @@ import com.gapcoder.weico.Index.Model.WeicoModel;
 import com.gapcoder.weico.R;
 import com.gapcoder.weico.Utils.Curl;
 import com.gapcoder.weico.Utils.Pool;
+import com.gapcoder.weico.Utils.T;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
@@ -24,6 +25,7 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import java.util.LinkedList;
 
 import butterknife.BindView;
+import butterknife.OnClick;
 
 public class Account extends Base {
 
@@ -57,6 +59,7 @@ public class Account extends Base {
 
     @Override
     public void init() {
+
         if ((uid = getIntent().getIntExtra("uid", 0)) == 0)
             return;
 
@@ -156,6 +159,16 @@ public class Account extends Base {
         });
 
     }
+
+
+    @OnClick(R.id.bg)
+    void OnChange(){
+
+        T.show2(this,"点击封面");
+
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

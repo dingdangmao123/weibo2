@@ -63,10 +63,9 @@ public class UserListAdapter extends RecyclerView.Adapter<UserListAdapter.SnapVi
         UserListModel.InnerBean m = data.get(position);
         h.name.setText(m.getName());
 
-        if(!m.getFace().equals((String)h.face.getTag()))
-            h.face.setImageBitmap(BitmapFactory.decodeResource(mContext.getResources(),R.drawable.face));
-
-        h.face.setTag(m.getFace());
+        //if(!m.getFace().equals((String)h.face.getTag()))
+        //    h.face.setImageBitmap(BitmapFactory.decodeResource(mContext.getResources(),R.drawable.face));
+        h.face.setTag(Config.face+m.getFace());
         Image.down((Activity)mContext,h.face, Config.face+m.getFace());
 
     }

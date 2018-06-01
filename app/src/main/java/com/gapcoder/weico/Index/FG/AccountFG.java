@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.gapcoder.weico.Account.Account;
+import com.gapcoder.weico.Box.Box;
 import com.gapcoder.weico.Change.Change;
 import com.gapcoder.weico.Config;
 import com.gapcoder.weico.General.SysMsg;
@@ -24,6 +25,7 @@ import com.gapcoder.weico.General.UserModel;
 import com.gapcoder.weico.Login.Login;
 import com.gapcoder.weico.Post;
 import com.gapcoder.weico.R;
+import com.gapcoder.weico.Setting.Setting;
 import com.gapcoder.weico.UserList.UserList;
 import com.gapcoder.weico.Utils.ActivityList;
 import com.gapcoder.weico.Utils.Curl;
@@ -93,7 +95,9 @@ public class AccountFG extends BaseFG {
             i.putExtra("key","place");
             i.putExtra("title","地区");
             i.putExtra("text",place.getText().toString());
-            startActivityForResult(i,PLACE);
+
+            startActivityForResult(i, PLACE);
+
     }
 
     @OnClick(R.id.exititem)
@@ -105,8 +109,23 @@ public class AccountFG extends BaseFG {
         ActivityList.exit();
     }
 
+    @OnClick(R.id.setting)
+    void setting(){
+        Log.i("tag","setting");
+        Intent i=new Intent(getActivity(),Setting.class);
+        startActivity(i);
+    }
+
+    @OnClick(R.id.box)
+    void box(){
+        Log.i("tag","box");
+        Intent i=new Intent(getActivity(),Box.class);
+        startActivity(i);
+    }
+
     @OnClick(R.id.signitem)
     void sign(){
+
         Intent i=new Intent(getActivity(),Change.class);
         i.putExtra("key","sign");
         i.putExtra("title","签名");
@@ -232,6 +251,8 @@ public class AccountFG extends BaseFG {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+      //  if(data==null)
+        //        return ;
         String res=data.getStringExtra("text");
         switch(requestCode){
             case PLACE:

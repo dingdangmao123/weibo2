@@ -10,7 +10,7 @@ import static android.content.Context.MODE_PRIVATE;
  */
 
 public class Token {
-    public static String token="d0d0e32f98beddbc4d1e144f7c41eafae0e53104";
+    public static String token="";
     public static void exit(Context context){
         SharedPreferences.Editor editor = context.getSharedPreferences("token", MODE_PRIVATE).edit();
         editor.putString("token", "");

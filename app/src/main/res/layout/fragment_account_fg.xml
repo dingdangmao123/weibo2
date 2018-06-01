@@ -30,10 +30,13 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
                 <LinearLayout
                     android:background="#FFF"
                     android:padding="15dp"
-                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="30dp"
                     android:orientation="horizontal"
                     android:layout_width="match_parent"
@@ -48,6 +51,11 @@
                         android:layout_width="100dp"
                         android:layout_height="100dp" />
                 </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
+
 
                 <LinearLayout
                     android:id="@+id/careitem"
@@ -74,11 +82,11 @@
                         android:layout_height="24dp" />
 
                 </LinearLayout>
-                <View android:layout_height="1dp"
+                <View
                     android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
                     android:layout_width="match_parent"
-                    android:background="@color/gray"/>
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
 
                 <LinearLayout
                     android:id="@+id/fansitem"
@@ -103,11 +111,12 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp" />
                 </LinearLayout>
-                <View android:layout_height="1dp"
+                <View
                     android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
                     android:layout_width="match_parent"
-                    android:background="@color/gray"/>
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
+
                 <LinearLayout
                     android:id="@+id/placeitem"
                     android:orientation="horizontal"
@@ -130,12 +139,11 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp" />
                 </LinearLayout>
-
-                <View android:layout_height="1dp"
+                <View
                     android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
                     android:layout_width="match_parent"
-                    android:background="@color/gray"/>
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
 
                 <LinearLayout
                     android:id="@+id/signitem"
@@ -161,11 +169,11 @@
                         android:layout_width="24dp"
                         android:layout_height="24dp" />
                 </LinearLayout>
-                <View android:layout_height="1dp"
+                <View
                     android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
                     android:layout_width="match_parent"
-                    android:background="@color/gray"/>
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
 
                 <LinearLayout
                     android:orientation="horizontal"
@@ -185,15 +193,79 @@
                         android:layout_height="24dp" />
 
                 </LinearLayout>
-                <View android:layout_height="1dp"
+                <View
                     android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
                     android:layout_width="match_parent"
-                    android:background="@color/gray"/>
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
+
+                <View
+                    android:layout_marginTop="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
                 <LinearLayout
                     android:orientation="horizontal"
                     android:padding="15dp"
-                    android:layout_marginTop="30dp"
+                    android:background="#fff"
+                    android:id="@+id/box"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:gravity="center"
+                        android:text="草稿箱"
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <Button
+                        android:background="@mipmap/ic_keyboard_arrow_right"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp" />
+
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
+
+
+                <View
+                    android:layout_marginTop="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:padding="15dp"
+                    android:background="#fff"
+                    android:id="@+id/setting"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:gravity="center"
+                        android:text="设置"
+                        android:layout_weight="1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                    <Button
+                        android:background="@mipmap/ic_keyboard_arrow_right"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp" />
+
+                </LinearLayout>
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
+
+                <View
+                    android:layout_marginTop="20dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:padding="15dp"
                     android:background="#fff"
                     android:id="@+id/exititem"
                     android:layout_width="match_parent"
@@ -210,11 +282,10 @@
                         android:layout_height="24dp" />
 
                 </LinearLayout>
-                <View android:layout_height="1dp"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginRight="15dp"
+                <View
                     android:layout_width="match_parent"
-                    android:background="@color/gray"/>
+                    android:layout_height="0.5dp"
+                    android:background="#cccccc"/>
 
             </LinearLayout>
     </ScrollView>

@@ -65,14 +65,11 @@
                 android:layout_marginBottom="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
-                <com.jaeger.ninegridimageview.NineGridImageView
+                <com.gapcoder.weico.Views.NineView.NineView
                     android:id="@+id/NineGrid"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
                     android:layout_width="match_parent"
-                    app:imgGap="4dp"
-                    app:singleImgSize="150dp"
-                    app:showStyle="fill"/>
+                    android:layout_height="wrap_content"/>
             </LinearLayout>
 
             <LinearLayout
@@ -85,6 +82,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    android:layout_marginTop="0dp"
                     android:textColor="@color/text"
                     android:textSize="15sp" />
 
@@ -94,6 +92,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:textColor="@color/text"
+                    android:layout_marginTop="0dp"
                     android:textSize="15sp" />
             </LinearLayout>
         </LinearLayout>

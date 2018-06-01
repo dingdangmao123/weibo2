@@ -4,9 +4,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -23,13 +24,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.gapcoder.weico.Config;
+import com.gapcoder.weico.General.SysMsg;
+import com.gapcoder.weico.General.URLService;
 import com.gapcoder.weico.Index.FG.AccountFG;
 import com.gapcoder.weico.Index.FG.TitleFG;
 import com.gapcoder.weico.Index.FG.WeicoFG;
 import com.gapcoder.weico.MessageService.MessageService;
 import com.gapcoder.weico.R;
 import com.gapcoder.weico.Utils.ActivityList;
+import com.gapcoder.weico.Utils.Pool;
+import com.gapcoder.weico.Utils.Token;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -58,16 +66,13 @@ public class index extends AppCompatActivity {
 
         final Typeface typeface = Typeface.createFromAsset(getAssets(), "fz.TTF");
 
-        LayoutInflaterCompat.setFactory(LayoutInflater.from(this), new LayoutInflaterFactory()
-        {
+        LayoutInflaterCompat.setFactory(LayoutInflater.from(this), new LayoutInflaterFactory() {
             @Override
-            public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-            {
+            public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
                 AppCompatDelegate delegate = getDelegate();
                 View view = delegate.createView(parent, name, context, attrs);
 
-                if ( view!= null && (view instanceof TextView))
-                {
+                if (view != null && (view instanceof TextView)) {
                     ((TextView) view).setTypeface(typeface);
                 }
                 return view;
@@ -79,28 +84,27 @@ public class index extends AppCompatActivity {
         ButterKnife.bind(this);
         ActivityList.add(this);
 
-        tab.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-                if(item.getItemId()==R.id.weico)
-                    bar.hide(false);
-                FragmentTransaction tran = fm.beginTransaction();
-                hideFragments(tran);
-                int id = item.getItemId();
-                if (!flag.contains(id)) {
-                    tran.add(R.id.container, map.get(id));
-                    flag.add(id);
-                }
-                tran.show(map.get(id));
-                tran.commit();
-                return true;
+
+        tab.setOnNavigationItemSelectedListener((MenuItem item) -> {
+            if (item.getItemId() == R.id.weico)
+                bar.hide(false);
+            FragmentTransaction tran = fm.beginTransaction();
+            hideFragments(tran);
+            int id = item.getItemId();
+            if (!flag.contains(id)) {
+                tran.add(R.id.container, map.get(id));
+                flag.add(id);
             }
+            tran.show(map.get(id));
+            tran.commit();
+            return true;
         });
 
         bar = new QBadgeView(this);
+        bar.bindTarget(tab).setBadgeGravity(Gravity.CENTER | Gravity.START);
+        bar.setGravityOffset(40, 0, true);
 
-        bar.bindTarget(tab).setBadgeGravity(Gravity.CENTER|Gravity.START);
-        bar.setGravityOffset(40,0,true);
+        initSetting();
 
         FragmentTransaction tran = fm.beginTransaction();
         hideFragments(tran);
@@ -112,12 +116,57 @@ public class index extends AppCompatActivity {
         flag.add(R.id.weico);
         tran.commit();
 
-        receiver=new MessageReceiver();
-        filter=new IntentFilter();
+        receiver = new MessageReceiver();
+        filter = new IntentFilter();
         filter.addAction("com.gapcoder.weico.MESSAGE");
-        registerReceiver(receiver,filter);
-       // Intent service=new Intent(this, MessageService.class);
+        registerReceiver(receiver, filter);
+        // Intent service=new Intent(this, MessageService.class);
         //startService(service);
+
+        uploadCrash();
+    }
+
+    protected void initSetting() {
+
+        SharedPreferences p = getSharedPreferences("setting", MODE_PRIVATE);
+        Config.mode = p.getBoolean("mode", false);
+        Config.box = p.getBoolean("box", false);
+
+    }
+
+    private void uploadCrash() {
+
+        final File file = new File(getCacheDir(), "crash.log");
+        Long filelength = file.length();
+        String str = null;
+
+        byte[] filecontent = new byte[filelength.intValue()];
+        try {
+
+            FileInputStream in = new FileInputStream(file);
+            in.read(filecontent);
+            str = new String(filecontent);
+
+        } catch (Exception e) {
+
+            System.out.println(e.toString());
+        } finally {
+
+        }
+
+        String device = Build.VERSION.RELEASE + " " + Build.BRAND + "-" + Build.MODEL;
+        final HashMap<String, String> map = new HashMap<>();
+        map.put("token", Token.token);
+        map.put("device", device);
+        map.put("text", str);
+
+        Pool.run(() -> {
+            final SysMsg r = URLService.post("crash.php", map, SysMsg.class);
+            Log.i("tag", r.getMsg());
+            if (r.getCode().equals("OK")) {
+                file.delete();
+            }
+        });
     }
 
     private void hideFragments(FragmentTransaction transaction) {
@@ -132,22 +181,21 @@ public class index extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Intent service=new Intent(this, MessageService.class);
+        Intent service = new Intent(this, MessageService.class);
         stopService(service);
         unregisterReceiver(receiver);
         ActivityList.remove(this);
     }
 
-    class MessageReceiver extends BroadcastReceiver{
+    class MessageReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            int num=intent.getIntExtra("num",0);
-            Log.i("tag",""+num);
-            ((WeicoFG)map.get(R.id.weico)).message(num);
+            int num = intent.getIntExtra("num", 0);
+            Log.i("tag", "" + num);
+            ((WeicoFG) map.get(R.id.weico)).message(num);
             bar.setBadgeNumber(-num);
         }
     }
