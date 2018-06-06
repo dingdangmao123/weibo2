@@ -78,9 +78,8 @@ public class FollowFG extends BaseFG {
     }
 
     void Refresh() {
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
+
+        Pool.run(()->{
                 String url = "newfans.php?token=" + Token.token;
                 final SysMsg m = URLService.get(url, UserListModel.class);
                 if (!check(m, rf)) {
@@ -89,17 +88,11 @@ public class FollowFG extends BaseFG {
                 tmp = ((UserListModel) m).getInner();
                 data.clear();
                 data.addAll(tmp);
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
+                UI(()->{
                         SmartRefresh(rf);
                         adapter.notifyDataSetChanged();
-                    }
                 });
-            }
         });
-
     }
-
 }
 

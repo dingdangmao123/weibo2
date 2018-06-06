@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.gapcoder.weico.Account.Account;
 import com.gapcoder.weico.Comment.Comment;
 import com.gapcoder.weico.Config;
 import com.gapcoder.weico.Index.Model.WeicoModel;
@@ -28,6 +29,7 @@ import com.gapcoder.weico.Utils.Image;
 import com.gapcoder.weico.Utils.LinkText;
 import com.gapcoder.weico.Utils.T;
 import com.gapcoder.weico.Utils.Time;
+import com.gapcoder.weico.Utils.Token;
 import com.gapcoder.weico.Views.NineView.NineView;
 import com.jaeger.ninegridimageview.NineGridImageView;
 import com.jaeger.ninegridimageview.NineGridImageViewAdapter;
@@ -79,12 +81,22 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
 
             }
         });
+
         h.t1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(mContext, User.class);
+
+                Intent i=null;
                 int p = h.getAdapterPosition();
-                i.putExtra("uid", data.get(p).getUid());
+                int id=data.get(p).getUid();
+                Log.i("t1",id+"");
+
+                if(Token.uid!=id)
+                   i = new Intent(mContext, User.class);
+                else
+                   i=new Intent(mContext, Account.class);
+
+                i.putExtra("uid", id);
                 mContext.startActivity(i);
             }
         });

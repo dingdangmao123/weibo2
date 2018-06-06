@@ -168,32 +168,33 @@ public class WeicoFG extends BaseFG {
         });
         msg = new QBadgeView(getActivity());
         msg.bindTarget(target).setBadgeGravity(Gravity.END | Gravity.TOP);
-       // getMessage();
+        getMessage();
         rf.autoRefresh();
     }
 
     public void message(int num){
         msg.setBadgeNumber(-num);
     }
+
     void getMessage() {
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
+
+        Pool.run(()->{
                 MessageModel m = (MessageModel) Curl.getText(Config.url + "message.php?token=" + Token.token, MessageModel.class);
                 if (m == null)
                     return;
-                final int num = m.getInner().getTotal();
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
-                        message(num);
-                    }
-                });
-            }
+                if(m.getInner()!=null) {
+                    final int num = m.getInner().getTotal();
+                    UI(() -> {
+                                message(num);
+                            }
+                    );
+                }
         });
+
     }
 
     void Refresh(final int flag) {
+        getMessage();
         if (flag == 1) {
             if (reset == true) {
                 id = 0;
@@ -208,10 +209,13 @@ public class WeicoFG extends BaseFG {
                 id = 0;
         }
 
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
+        Pool.run(()->{
                 String url =type + ".php?flag=" + String.valueOf(flag) + "&id=" + String.valueOf(id);
+
+                if(type.equals("care")){
+                    url="care.php?token="+Token.token+"&flag=" + String.valueOf(flag) + "&id=" + String.valueOf(id);
+                }
+
                 SysMsg m = URLService.get(url, WeicoModel.class);
                 Log.i("tag", url);
                 if (!check(m, rf)) {
@@ -238,16 +242,12 @@ public class WeicoFG extends BaseFG {
                     }
                 }
 
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
+                UI(()->{
                         SmartRefresh(rf);
                         adapter.notifyDataSetChanged();
                         reset = false;
-                    }
                 });
                 tmp.clear();
-            }
         });
     }
 

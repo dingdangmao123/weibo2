@@ -1,5 +1,6 @@
 package com.gapcoder.weico.Title;
 
+import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -30,11 +31,13 @@ public class Title extends Base {
     LinkedList<WeicoModel.InnerBean> tmp = new LinkedList<>();
     WeicoAdapter adapter;
     TitleModel.inner title;
-    int cache = 10;
+    int cache = 20;
     int id = 0;
 
-    @BindView(R.id.title)
+
+    @BindView(R.id.tv)
     TextView tv;
+
     @BindView(R.id.timeline)
     RecyclerView tl;
     @BindView(R.id.refreshLayout)
@@ -54,70 +57,74 @@ public class Title extends Base {
     public void init() {
 
 
-        title = new TitleModel.inner(getIntent().getIntExtra("id", 0), getIntent().getStringExtra("title"));
-        tv.setText(title.getTitle());
+        Bundle b=getIntent().getExtras();
+        title = new TitleModel.inner(b.getInt("tid"),b.getString("title"));
+        tv.setText("#"+title.getTitle()+"#");
+
+        Log.i("tag",title.getId()+" "+title.getTitle());
 
         adapter = new WeicoAdapter(data, this);
-
         tl.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         tl.setAdapter(adapter);
-        rf.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
-                Refresh(1);
-            }
-        });
-        rf.setOnLoadmoreListener(new OnLoadmoreListener() {
-            @Override
-            public void onLoadmore(RefreshLayout refreshlayout) {
-                Refresh(0);
-            }
-        });
+        rf.setOnRefreshListener((RefreshLayout refreshlayout)->{Refresh(1);});
+        rf.setOnLoadmoreListener((RefreshLayout refreshlayout)->{Refresh(0);});
         rf.autoRefresh();
-        Refresh(1);
+
+        //Refresh(1);
     }
 
     public void Refresh(final int flag) {
         Log.i("tag",""+id);
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
+        if (flag == 1) {
 
-                String url = "weicotitle.php?tid=" +title.getId()+"&title="+title.getTitle()+"&flag=" + flag+"&id=" + id;
-                SysMsg m = URLService.get(url, TitleSearchModel.class);
-                Log.i("tag", url);
-                if (!check(m, rf)) {
-                    return;
-                }
-                tmp = ((TitleSearchModel) m).getInner().getInner();
-                if(tmp.size()>0)
-                    id=((TitleSearchModel) m).getInner().getId();
-                if (flag == 1) {
-                    for (int i = 0; i < tmp.size(); i++)
-                        data.addFirst(tmp.get(tmp.size() - i - 1));
-                    int n = data.size() - cache;
-                    for (int i = 0; i < n; i++) {
-                        data.removeLast();
-                    }
-                } else if (tmp.size() > 0) {
-                    data.addAll(tmp);
-                    int n = data.size() - cache;
-                    for (int i = 0; i < n; i++) {
-                        data.removeFirst();
-                    }
-                }
+          if (data.size() != 0)
+                id = data.get(0).getId();
+            else
+                id = 0;
+
+        } else {
+
+            if (data.size() != 0)
+                id = data.get(data.size() - 1).getId();
+            else
+                id = 0;
+        }
 
 
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
-                        adapter.notifyDataSetChanged();
-                        SmartRefresh(rf);
-                    }
-                });
+        Pool.run(()->{
+            String url = "weicotitle.php?tid=" +title.getId()+"&title="+title.getTitle()+"&flag=" + flag+"&id=" + id;
+
+            SysMsg m = URLService.get(url, WeicoModel.class);
+
+            Log.i("tag", url);
+            if (!check(m, rf)) {
+                return;
             }
-        });
 
+            tmp = ((WeicoModel) m).getInner();
+
+            if (flag == 1) {
+                for (int i = 0; i < tmp.size(); i++)
+                    data.addFirst(tmp.get(tmp.size() - i - 1));
+                int n = data.size() - cache;
+                for (int i = 0; i < n; i++) {
+                    data.removeLast();
+                }
+            } else if (tmp.size() > 0) {
+                data.addAll(tmp);
+                int n = data.size() - cache;
+                for (int i = 0; i < n; i++) {
+                    data.removeFirst();
+                }
+            }
+
+
+            UI(()->{
+                adapter.notifyDataSetChanged();
+                SmartRefresh(rf);
+            });
+
+        });
     }
 
 }

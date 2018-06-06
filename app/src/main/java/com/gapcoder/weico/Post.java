@@ -66,6 +66,11 @@ public class Post extends Base {
             MultiImageSelector.create().count(9 - url.size())
                     .start(this, IMAGE);
         });
+
+
+        //MultiImageSelector.create(this).
+
+
     }
 
     @OnTextChanged(R.id.text)

@@ -29,6 +29,7 @@ import com.gapcoder.weico.Setting.Setting;
 import com.gapcoder.weico.UserList.UserList;
 import com.gapcoder.weico.Utils.ActivityList;
 import com.gapcoder.weico.Utils.Curl;
+import com.gapcoder.weico.Utils.Image;
 import com.gapcoder.weico.Utils.Pool;
 import com.gapcoder.weico.Utils.T;
 import com.gapcoder.weico.Utils.Token;
@@ -49,11 +50,14 @@ import static android.app.Activity.RESULT_OK;
 
 public class AccountFG extends BaseFG {
 
-    UserModel.InnerBean user;
+    UserModel.InnerBean user=new UserModel.InnerBean();
+
+    String oldurl="";
 
     final int PLACE=0;
     final int SIGN=1;
     final int FACE=2;
+    final int NAME=3;
 
     @BindView(R.id.face)
     ImageView face;
@@ -82,7 +86,6 @@ public class AccountFG extends BaseFG {
     boolean flag=false;
 
 
-
     @OnClick(R.id.face)
     void select(){
         ISNav.getInstance().toListActivity(this, config,FACE);
@@ -99,6 +102,20 @@ public class AccountFG extends BaseFG {
             startActivityForResult(i, PLACE);
 
     }
+
+
+    @OnClick(R.id.nameitem)
+    void name(){
+
+        Intent i=new Intent(getActivity(),Change.class);
+        i.putExtra("key","name");
+        i.putExtra("title","昵称");
+        i.putExtra("text",name.getText().toString());
+
+        startActivityForResult(i, NAME);
+
+    }
+
 
     @OnClick(R.id.exititem)
     void exit(){
@@ -118,6 +135,7 @@ public class AccountFG extends BaseFG {
 
     @OnClick(R.id.box)
     void box(){
+
         Log.i("tag","box");
         Intent i=new Intent(getActivity(),Box.class);
         startActivity(i);
@@ -163,13 +181,16 @@ public class AccountFG extends BaseFG {
             public void run() {
                 HashMap<String, String> map = new HashMap<>();
                 map.put("token", Token.token);
+                map.put("key","face");
                 final SysMsg r = URLService.upload("face.php", map, url, SysMsg.class);
                 if (!check(r, null)) {
                     return;
                 }
+                Image.delete(getActivity(),Config.face+oldurl);
                 UI(new Runnable() {
                     @Override
                     public void run() {
+
                         T.show(getActivity(), r.getMsg());
                         Refresh();
                     }
@@ -183,18 +204,21 @@ public class AccountFG extends BaseFG {
             @Override
             public void displayImage(Context context, String path, ImageView imageView) {
                 Glide.with(context).load(path).into(imageView);
+
             }
         });
+
         config = new ISListConfig.Builder()
                 .multiSelect(false)
-                .btnBgColor(Color.GRAY)
+                .btnBgColor(R.color.colorPrimary)
                 .btnTextColor(R.color.colorPrimary)
-                .statusBarColor(Color.parseColor("#3F51B5"))
+                .statusBarColor(R.color.colorPrimary)
                 .title("头像设置")
                 .titleColor(Color.WHITE)
-                .titleBgColor(Color.parseColor("#3F51B5"))
+                .titleBgColor(R.color.colorPrimary)
                 .cropSize(1, 1, 200, 200)
                 .needCrop(true)
+                .needCamera(true)
                 .maxNum(1)
                 .build();
     }
@@ -227,7 +251,11 @@ public class AccountFG extends BaseFG {
                 String url="account.php?token="+ Token.token;
                 final SysMsg m = URLService.get(url, UserModel.class);
                 Log.i("tag",url);
+                if(!(m instanceof UserModel))
+                    return ;
                 user= ((UserModel) m).getInner();
+                oldurl=user.getFace();
+
                 UI(new Runnable() {
                     @Override
                     public void run() {
@@ -238,7 +266,8 @@ public class AccountFG extends BaseFG {
                         place.setText(user.getPlace());
                     }
                 });
-                final Bitmap bit = Curl.getImage(Config.url+"face/"+user.getFace());
+                final Bitmap bit = Curl.getImage(Config.face+user.getFace());
+
                 UI(new Runnable() {
                     @Override
                     public void run() {
@@ -251,14 +280,20 @@ public class AccountFG extends BaseFG {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-      //  if(data==null)
-        //        return ;
+        if(data==null)
+            return ;
         String res=data.getStringExtra("text");
         switch(requestCode){
             case PLACE:
                 if(resultCode==RESULT_OK){
                     place.setText(res);
                     user.setPlace(res);
+                }
+                break;
+            case NAME:
+                if(resultCode==RESULT_OK){
+                    name.setText(res);
+                    user.setName(res);
                 }
                 break;
             case SIGN:

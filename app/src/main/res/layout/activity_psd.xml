@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.gapcoder.weico.Psd">
+
+    <!-- TODO: Update blank fragment layout -->
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        style="@style/MyToolBar"
+        >
+        <TextView
+            android:id="@+id/accountTitle"
+            android:text="修改密码"
+            android:textSize="18sp"
+            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </android.support.v7.widget.Toolbar>
+    <ScrollView
+        android:layout_marginTop="?attr/actionBarSize"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:background="#fff"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+                <EditText
+                    android:id="@+id/old"
+                    android:hint="输入旧密码"
+                    android:textSize="14sp"
+                    android:background="@drawable/edit"
+                    android:textColor="@color/text"
+                    android:inputType="textPassword"
+                    android:layout_margin="10dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+
+
+
+                <EditText
+                    android:id="@+id/psd1"
+                    android:hint="输入新密码(8-20数字或字母)"
+                    android:background="@drawable/edit"
+                    android:textColor="@color/text"
+                    android:inputType="textPassword"
+                    android:layout_margin="10dp"
+                    android:textSize="14sp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+
+
+
+                <EditText
+                    android:id="@+id/psd2"
+                    android:hint="再输入一次"
+                    android:textSize="14sp"
+                    android:background="@drawable/edit"
+                    android:textColor="@color/text"
+                    android:inputType="textPassword"
+                    android:layout_margin="10dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"/>
+
+
+                <Button
+                    android:id="@+id/ok"
+                    android:text="确定"
+                    android:textSize="15sp"
+                    android:textColor="@color/colorPrimary"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/btn"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
+
+
+
+
+
+
+
+
+</android.support.constraint.ConstraintLayout>

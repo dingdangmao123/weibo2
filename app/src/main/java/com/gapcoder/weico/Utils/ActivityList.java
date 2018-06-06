@@ -15,6 +15,9 @@ public class ActivityList {
     public static void add(Activity ins){
         list.add(ins);
     }
+    public static Activity getLast(){
+        return list.get(0);
+    }
     public static void remove(Activity ins){
         list.remove(ins);
     }

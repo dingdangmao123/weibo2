@@ -98,10 +98,7 @@ public class AtFG extends BaseFG {
         } else {
             id = data.getInner().get(list.size() - 1).getId();
         }
-        //((Message)getActivity()).getMessage();
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
+        Pool.run(()->{
                 String url = "at.php?token=" + Token.token + "&flag="+flag+"&id="+id;
                 Log.i("tag", url);
                 final SysMsg m = URLService.get(url, AtModel.class);
@@ -126,14 +123,10 @@ public class AtFG extends BaseFG {
                     }
                 }
 
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
+                UI(()->{
                         SmartRefresh(rf);
                         adapter.notifyDataSetChanged();
-                    }
                 });
-            }
         });
     }
 }

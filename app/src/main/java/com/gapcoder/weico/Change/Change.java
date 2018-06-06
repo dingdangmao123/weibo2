@@ -16,6 +16,7 @@ import com.gapcoder.weico.Index.FG.AccountFG;
 import com.gapcoder.weico.Index.Model.WeicoModel;
 import com.gapcoder.weico.R;
 import com.gapcoder.weico.Utils.Pool;
+import com.gapcoder.weico.Utils.T;
 import com.gapcoder.weico.Utils.Token;
 
 import java.util.HashMap;
@@ -30,8 +31,6 @@ public class Change extends Base {
     TextView titleTitle;
     @BindView(R.id.text)
     EditText text;
-
-
 
     String tag;
     String key;
@@ -53,35 +52,58 @@ public class Change extends Base {
     public void post() {
 
 
-        final String t=text.getText().toString();
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
+        final String s=text.getText().toString();
+        if(s.length()==0){
+            T.show2(this,"长度不能为0");
+            return ;
+        }
 
-                if(!tag.equals(t)) {
-                    tag=text.getText().toString();
+        switch(key){
+            case "place":
+                if(s.length()>20){
+                    T.show2(this,"地点太长");
+                    return ;
+                }
+                break;
+            case "name":
+                if(s.length()<6||s.length()>20){
+                    T.show2(this,"昵称不合法(6-20)");
+                    return ;
+                }
+                break;
+            case "sign":
+                if(s.length()>100){
+                    T.show2(this,"签名太长(<=100)");
+                    return ;
+                }
+                break;
+        }
+
+        if(tag.equals(s)) {
+            return ;
+        }
+
+        Pool.run(()->{
+
                     String url = "change.php";
                     HashMap<String, String> map = new HashMap<>();
                     map.put("token", Token.token);
                     map.put("key", key);
-                    map.put("tag", tag);
+                    map.put("tag", s);
                     SysMsg t = URLService.post(url, map, SysMsg.class);
                     if (!check(t, null)) {
                         return;
                     }
-                }
 
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
+                    tag=s;
 
+                    UI(()->{
                         Intent i=new Intent(Change.this, AccountFG.class);
                         i.putExtra("text",tag);
                         setResult(RESULT_OK,i);
                         finish();
-                    }
-                });
-            }
+                    });
+
         });
 
     }

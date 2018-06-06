@@ -16,7 +16,7 @@
         android:id="@+id/name"
         android:textSize="15sp"
         android:layout_gravity="center_vertical"
-        android:textColor="@color/highlight"
+        android:textColor="@color/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 </LinearLayout>

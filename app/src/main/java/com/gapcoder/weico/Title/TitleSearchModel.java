@@ -22,7 +22,6 @@ public class TitleSearchModel extends SysMsg {
     }
 
     public static class Bean{
-        private int id;
 
         private LinkedList<com.gapcoder.weico.Index.Model.WeicoModel.InnerBean> inner;
 
@@ -32,14 +31,6 @@ public class TitleSearchModel extends SysMsg {
 
         public void setInner(LinkedList<WeicoModel.InnerBean> inner) {
             this.inner = inner;
-        }
-
-        public int getId() {
-            return id;
-        }
-
-        public void setId(int id) {
-            this.id = id;
         }
 
     }

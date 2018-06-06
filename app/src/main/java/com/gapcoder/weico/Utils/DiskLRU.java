@@ -16,7 +16,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class DiskLRU {
 
-    private static int max = 1024 * 1024 * 100;
+    private static int max = 1024 * 1024 * 300;
     private static DiskLruCache disklru = null;
 
     private DiskLRU(Context context) {

@@ -15,7 +15,7 @@ public class App extends Application {
         super.onCreate();
         LeakCanary.install(this);
         CrashHandler ins=new CrashHandler(this);
-        Thread t=Thread.currentThread();
-        t.setUncaughtExceptionHandler(ins);
+       // Thread t=Thread.currentThread();
+       // t.setUncaughtExceptionHandler(ins);
     }
 }

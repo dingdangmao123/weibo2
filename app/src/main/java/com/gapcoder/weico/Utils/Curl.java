@@ -51,6 +51,7 @@ public class Curl {
 
         StringBuilder sb = new StringBuilder();
         HttpURLConnection con = null;
+        Object tl=null;
         try {
             URL url = new URL(link);
             con = (HttpURLConnection) url.openConnection();
@@ -63,14 +64,15 @@ public class Curl {
             while ((str = br.readLine()) != null) {
                 sb.append(str);
             }
+            Gson gson = new Gson();
+            tl= gson.fromJson(sb.toString(), clz);
         } catch (Exception e) {
             Log.i("error", e.toString());
         } finally {
             if (con != null)
                 con.disconnect();
         }
-        Gson gson = new Gson();
-        Object tl = gson.fromJson(sb.toString(), clz);
+
         return tl;
 
     }

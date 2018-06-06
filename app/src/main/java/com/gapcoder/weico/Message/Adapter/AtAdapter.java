@@ -64,14 +64,14 @@ public class AtAdapter  extends RecyclerView.Adapter<AtAdapter.SnapViewHolder>{
         int id=m.getHid();
         String face=Config.face+user.get(m.getHid()).getFace();
         h.t1.setText(user.get(id).getName());
-        h.t2.setText("@了你·"+ Time.format(m.getTime()));
-
+        h.t2.setText("@了你 "+ Time.format(m.getTime()));
 
         if(!face.equals((String)h.face.getTag()))
             h.face.setImageBitmap(BitmapFactory.decodeResource(context.getResources(),R.drawable.face));
 
         h.face.setTag(face);
         Image.down((Activity)context,h.face,face);
+
     }
 
     @Override

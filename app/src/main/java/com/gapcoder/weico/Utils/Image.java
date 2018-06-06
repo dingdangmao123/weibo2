@@ -24,7 +24,7 @@ import java.util.concurrent.Executors;
 
 public class Image{
     private static LruCache<String,Bitmap> ins;
-    private static ExecutorService pool= Executors.newFixedThreadPool(2);
+    private static ExecutorService pool= Executors.newFixedThreadPool(4);
     private static DiskLruCache disklru=null;
     private synchronized static LruCache<String,Bitmap> getInstance(Context context){
         if(ins==null) {
@@ -43,6 +43,7 @@ public class Image{
     public static Bitmap get(Context context,String k){
         return getInstance(context).get(k);
     }
+
     public synchronized static void put(Context context,String k,Bitmap v){ getInstance(context).put(k,v);}
 
     public static void down(Activity context, ImageView v, String url,int w,int h){
@@ -123,6 +124,22 @@ public class Image{
                 return ;
             File f=edit.getFile(0);
             downImage(context,im,url,edit,new FileOutputStream(f));
+        }catch(Exception e){
+            Log.i("Unit", e.toString());
+        }
+    }
+
+    public static void delete(final Activity context,final String url){
+        Log.i("tag","delete from cache:"+url);
+        getInstance(context).remove(url);
+        try {
+            DiskLruCache.Editor  edit = disklru.edit(DiskLRU.Hash(url));
+            if(edit==null)
+                return ;
+            File f=edit.getFile(0);
+            if(f.exists()){
+                f.delete();
+            }
         }catch(Exception e){
             Log.i("Unit", e.toString());
         }

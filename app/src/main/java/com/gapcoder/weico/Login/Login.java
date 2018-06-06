@@ -20,6 +20,8 @@ import com.gapcoder.weico.General.SysMsg;
 import com.gapcoder.weico.General.URLService;
 import com.gapcoder.weico.Index.index;
 import com.gapcoder.weico.R;
+import com.gapcoder.weico.Register;
+import com.gapcoder.weico.Remember;
 import com.gapcoder.weico.Utils.Pool;
 import com.gapcoder.weico.Utils.T;
 import com.gapcoder.weico.Utils.Token;
@@ -32,7 +34,7 @@ import butterknife.OnClick;
 
 public class Login extends AppCompatActivity {
 
-    Handler mh=new Handler();
+    Handler mh = new Handler();
     @BindView(R.id.name)
     EditText name;
     @BindView(R.id.psd)
@@ -45,16 +47,13 @@ public class Login extends AppCompatActivity {
 
         final Typeface typeface = Typeface.createFromAsset(getAssets(), "fz.TTF");
 
-        LayoutInflaterCompat.setFactory(LayoutInflater.from(this), new LayoutInflaterFactory()
-        {
+        LayoutInflaterCompat.setFactory(LayoutInflater.from(this), new LayoutInflaterFactory() {
             @Override
-            public View onCreateView(View parent, String name, Context context, AttributeSet attrs)
-            {
+            public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
                 AppCompatDelegate delegate = getDelegate();
                 View view = delegate.createView(parent, name, context, attrs);
 
-                if ( view!= null && (view instanceof TextView))
-                {
+                if (view != null && (view instanceof TextView)) {
                     ((TextView) view).setTypeface(typeface);
                 }
                 return view;
@@ -62,8 +61,8 @@ public class Login extends AppCompatActivity {
         });
         super.onCreate(savedInstanceState);
         Token.initToken(this);
-        if(!Token.token.equals("")){
-            Intent i=new Intent(Login.this,index.class);
+        if (!Token.token.equals("")) {
+            Intent i = new Intent(Login.this, index.class);
             Login.this.startActivity(i);
         }
         setContentView(R.layout.activity_login);
@@ -71,34 +70,57 @@ public class Login extends AppCompatActivity {
     }
 
     @OnClick(R.id.login)
-    void login(){
+    void login() {
 
-       final  String key=name.getText().toString();
-       final  String p=psd.getText().toString();
+        final String key = name.getText().toString();
+        final String p = psd.getText().toString();
 
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
-                HashMap<String, String> map = new HashMap<>();
-                map.put("key", key);
-                map.put("psd", p);
-                final SysMsg r = URLService.post("login.php",map,LoginModel.class);
-                mh.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if(!r.getCode().equals("OK")){
-                            T.show(Login.this,r.getMsg());
-                        }else{
-                            LoginModel.InnerBean token=((LoginModel)r).getInner();
-                            Intent i=new Intent(Login.this,index.class);
-                            Token.initToken(Login.this,token.getToken());
-                            Login.this.startActivity(i);
-                            finish();
-                        }
-                    }
-                });
-            }
+        if(key.length()==0||p.length()==0){
+            T.show2(Login.this,"手机和密码不能为空!");
+            return ;
+        }
+
+        if(!key.matches("[0-9a-z]{11}")||!p.matches("[0-9a-z]{8,20}")){
+            T.show2(Login.this,"手机和密码不合法!");
+            return ;
+        }
+
+
+
+        Pool.run(() -> {
+            HashMap<String, String> map = new HashMap<>();
+            map.put("key", key);
+            map.put("psd", p);
+            final SysMsg r = URLService.post("login.php", map, LoginModel.class);
+            mh.post(() -> {
+                if (!r.getCode().equals("OK")) {
+                    T.show(Login.this, r.getMsg());
+                } else {
+
+                    LoginModel.InnerBean token = ((LoginModel) r).getInner();
+                    Token.initToken(Login.this, token.getToken());
+                    Token.uid = token.getUid();
+                    Intent i = new Intent(Login.this, index.class);
+                    Login.this.startActivity(i);
+                    finish();
+                }
+
+            });
+
         });
+    }
+
+    @OnClick(R.id.add)
+    void add() {
+        Intent i = new Intent(this, Register.class);
+        startActivity(i);
+    }
+
+    @OnClick(R.id.remember)
+    void remember() {
+
+        Intent i = new Intent(this, Remember.class);
+        startActivity(i);
     }
 
 }

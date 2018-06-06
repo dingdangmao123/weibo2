@@ -24,6 +24,7 @@ import com.gapcoder.weico.Index.FG.WeicoFG;
 import com.gapcoder.weico.Index.Model.WeicoModel;
 import com.gapcoder.weico.Message.FG.AtFG;
 import com.gapcoder.weico.Message.FG.CommFG;
+import com.gapcoder.weico.Message.FG.CoverFG;
 import com.gapcoder.weico.Message.FG.FollowFG;
 import com.gapcoder.weico.R;
 import com.gapcoder.weico.Utils.Curl;
@@ -53,8 +54,8 @@ public class Message extends Base {
     TextView title;
 
     EasyPopup mCirclePop;
-    QBadgeView[] msg = new QBadgeView[4];
-    TextView[] tv = new TextView[4];
+    QBadgeView[] msg = new QBadgeView[5];
+    TextView[] tv = new TextView[5];
     MessageModel.InnerBean m;
 
     public int cur=-1;
@@ -73,17 +74,14 @@ public class Message extends Base {
         map.put(1,fg);
         map.put(2,new AtFG());
         map.put(3,new CommFG());
+        map.put(4,new CoverFG());
+
         tran.add(R.id.container, fg);
         flag.add(1);
         tran.commit();
 
         popMenu();
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
-                getMessage();
-            }
-        });
+        Pool.run(()->{getMessage();});
 
 
     }
@@ -104,13 +102,13 @@ public class Message extends Base {
         tv[1] = mCirclePop.getView(R.id.t1);
         tv[2] = mCirclePop.getView(R.id.t2);
         tv[3] = mCirclePop.getView(R.id.t3);
+        tv[4] = mCirclePop.getView(R.id.t4);
         tv[1].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mCirclePop.dismiss();
                 title.setText("新粉丝");
                 msg[1].hide(false);
-                //msg[0].hide(false);
                 cur=1;
                 change(1);
             }
@@ -121,7 +119,6 @@ public class Message extends Base {
                 mCirclePop.dismiss();
                 title.setText("@我的");
                 msg[2].hide(false);
-                //msg[0].hide(false);
                 cur=2;
                 change(2);
             }
@@ -132,9 +129,18 @@ public class Message extends Base {
                 mCirclePop.dismiss();
                 title.setText("评论回复");
                 msg[3].hide(false);
-                //msg[0].hide(false);
                 cur=3;
                 change(3);
+            }
+        });
+        tv[4].setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCirclePop.dismiss();
+                title.setText("封面点赞");
+                msg[4].hide(false);
+                cur=4;
+                change(4);
             }
         });
     }
@@ -149,9 +155,7 @@ public class Message extends Base {
         tran.commit();
     }
     public  void getMessage() {
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
+        Pool.run(()->{
 
                 String url ="message.php?token=" + Token.token;
                 SysMsg t = URLService.get(url,  MessageModel.class);
@@ -160,22 +164,20 @@ public class Message extends Base {
                     return;
                 }
                 m=((MessageModel)t).getInner();
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateBadge();
-                    }
-                });
-            }
+                if(m==null)
+                    m=new MessageModel.InnerBean();
+            UI(()->{updateBadge();});
+
         });
     }
 
     void updateBadge() {
 
-        //badge(0, m.getTotal());
         badge(1, m.getFollow());
         badge(2, m.getAt());
         badge(3, m.getComment());
+        badge(4, m.getCover());
+
     }
 
     void badge(int i, int n) {

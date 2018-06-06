@@ -45,7 +45,7 @@ public class URLService {
 
         } catch (Exception e) {
             Log.i("tag", e.toString());
-            return new SysMsg("error",e.toString());
+            return new SysMsg("error","系统出错了!");
         }
     }
     public  static <T extends SysMsg> SysMsg get(String url,Class<T> clz) {
@@ -64,7 +64,7 @@ public class URLService {
         } catch (Exception e) {
 
             Log.i("tag", e.toString());
-            return new SysMsg("error",e.toString());
+            return new SysMsg("error","系统出错了");
         }
 
     }

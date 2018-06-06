@@ -131,6 +131,8 @@ public class index extends AppCompatActivity {
         SharedPreferences p = getSharedPreferences("setting", MODE_PRIVATE);
         Config.mode = p.getBoolean("mode", false);
         Config.box = p.getBoolean("box", false);
+        Config.message = p.getBoolean("message", true);
+        Config.weibo = p.getBoolean("weibo", true);
 
     }
 

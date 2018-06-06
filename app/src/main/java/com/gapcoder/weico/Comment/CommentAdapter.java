@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.gapcoder.weico.Account.Account;
 import com.gapcoder.weico.Config;
 import com.gapcoder.weico.Index.Model.TitleModel;
 import com.gapcoder.weico.R;
@@ -21,6 +22,7 @@ import com.gapcoder.weico.Title.Title;
 import com.gapcoder.weico.User.User;
 import com.gapcoder.weico.Utils.Image;
 import com.gapcoder.weico.Utils.Time;
+import com.gapcoder.weico.Utils.Token;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -70,9 +72,16 @@ public class CommentAdapter extends RecyclerView.Adapter<CommentAdapter.SnapView
         h.name.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i=new Intent(mContext,User.class);
+
+                Intent i=null;
                 int p=h.getAdapterPosition();
-                i.putExtra("uid",comment.get(p).getUid());
+                int uid=comment.get(p).getUid();
+
+                if(Token.uid!=uid)
+                    i = new Intent(mContext, User.class);
+                else
+                    i=new Intent(mContext, Account.class);
+                i.putExtra("uid",uid);
                 mContext.startActivity(i);
             }
         });

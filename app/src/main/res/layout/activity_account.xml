@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+android:background="#FFFFFF"
     tools:context="com.gapcoder.weico.Account.Account">
 
     <android.support.design.widget.AppBarLayout
@@ -53,12 +54,24 @@
                     android:id="@+id/bg"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
-                    android:scaleType="fitXY" />
+                    android:scaleType="centerCrop" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/face"
+                    android:layout_marginTop="-42dp"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    app:civ_border_width="2dp"
+                    android:translationZ="5dp"
+                    android:layout_marginLeft="30dp"
+                    app:civ_border_color="#FFFFFF"/>
 
                 <android.support.v7.widget.RecyclerView
                     android:background="#fff"
                     android:paddingTop="30dp"
                     android:id="@+id/timeline"
+                    android:padding="20dp"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>

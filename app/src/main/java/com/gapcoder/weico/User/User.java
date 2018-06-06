@@ -31,7 +31,7 @@ public class User extends Base {
 
     UserModel.InnerBean user;
     int uid = 0;
-    String n="";
+    String n = "";
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
@@ -75,47 +75,39 @@ public class User extends Base {
     void fans() {
         Intent i = new Intent(this, UserList.class);
         i.putExtra("uid", uid);
-        i.putExtra("type","fans");
+        i.putExtra("type", "fans");
         startActivity(i);
     }
 
     @OnClick(R.id.careitem)
-    void  care() {
-       Intent i = new Intent(this, UserList.class);
+    void care() {
+        Intent i = new Intent(this, UserList.class);
         i.putExtra("uid", uid);
-        i.putExtra("type","care");
+        i.putExtra("type", "care");
         startActivity(i);
     }
 
     @OnClick(R.id.add)
-    void  add() {
-        if(user.getFlag()==0)
-            return ;
+    void add() {
+        if (user.getFlag() == 0)
+            return;
 
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
-                final SysMsg m=URLService.get("follow.php?token="+Token.token+"&flag="+user.getFlag()+"&id="+user.getId(),SysMsg.class);
-
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        if(m.getCode().equals(Config.SUCCESS)) {
-                            if(user.getFlag()==2) {
-                                Log.i("tag","222");
-                                add.setText("添加关注");
-                                user.setFlag(1);
-                            }else {
-                                Log.i("tag","111");
-                                add.setText("取消关注");
-                                user.setFlag(2);
-                            }
-                        }
-                        T.show(User.this,m.getMsg());
+        Pool.run(() -> {
+            final SysMsg m = URLService.get("follow.php?token=" + Token.token + "&flag=" + user.getFlag() + "&id=" + user.getId(), SysMsg.class);
+            UI(() -> {
+                if (m.getCode().equals(Config.SUCCESS)) {
+                    if (user.getFlag() == 2) {
+                        Log.i("tag", "222");
+                        add.setText("添加关注");
+                        user.setFlag(1);
+                    } else {
+                        Log.i("tag", "111");
+                        add.setText("取消关注");
+                        user.setFlag(2);
                     }
-                });
-            }
+                }
+                T.show(User.this, m.getMsg());
+            });
         });
 
     }
@@ -128,48 +120,39 @@ public class User extends Base {
 
     @Override
     public void init() {
-            uid = getIntent().getIntExtra("uid",0);
-            n=getIntent().getStringExtra("name");
-            if(uid>0||n.length()>0)
-                Refresh();
+        uid = getIntent().getIntExtra("uid", 0);
+        n = getIntent().getStringExtra("name");
+        if (uid > 0 || n.length() > 0)
+            Refresh();
     }
 
     void Refresh() {
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
-                String url="user.php?token="+ Token.token+"&id="+uid+"&name="+n;
-                final SysMsg m = URLService.get(url, UserModel.class);
-                Log.i("tag",url);
-                user= ((UserModel) m).getInner();
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
-                        name.setText(user.getName());
-                        fans.setText(String.valueOf(user.getFans()));
-                        care.setText(String.valueOf(user.getCare()));
-                        sign.setText(user.getSign());
-                        place.setText(user.getPlace());
-                        switch(user.getFlag()){
-                            case 0:
-                                add.setText("我");
-                            case 1:
-                                add.setText("加为关注");
-                                break;
-                            case 2:
-                                add.setText("取消关注");
-                                break;
-                        }
-                    }
-                });
-                final Bitmap bit = Curl.getImage(Config.face+user.getFace());
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
-                        face.setImageBitmap(bit);
-                    }
-                });
-            }
+        Pool.run(() -> {
+            String url = "user.php?token=" + Token.token + "&id=" + uid + "&name=" + n;
+            final SysMsg m = URLService.get(url, UserModel.class);
+            Log.i("tag", url);
+            user = ((UserModel) m).getInner();
+            UI(() -> {
+                name.setText(user.getName());
+                fans.setText(String.valueOf(user.getFans()));
+                care.setText(String.valueOf(user.getCare()));
+                sign.setText(user.getSign());
+                place.setText(user.getPlace());
+                switch (user.getFlag()) {
+                    case 0:
+                        add.setText("我");
+                    case 1:
+                        add.setText("加为关注");
+                        break;
+                    case 2:
+                        add.setText("取消关注");
+                        break;
+                }
+            });
+            final Bitmap bit = Curl.getImage(Config.face + user.getFace());
+            UI(() -> {
+                face.setImageBitmap(bit);
+            });
         });
     }
 

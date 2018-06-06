@@ -15,8 +15,6 @@ public class UserModel extends  SysMsg{
 
     private InnerBean inner;
 
-
-
     public InnerBean getInner() {
         return inner;
     }

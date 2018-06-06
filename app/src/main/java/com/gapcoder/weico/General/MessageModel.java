@@ -31,9 +31,10 @@ public class MessageModel extends SysMsg{
          */
         private int id;
         private int uid;
-        private int at;
-        private int follow;
-        private int comment;
+        private int at=0;
+        private int follow=0;
+        private int comment=0;
+        private int cover=0;
 
         public int getId() {
             return id;
@@ -76,7 +77,15 @@ public class MessageModel extends SysMsg{
         }
 
         public int getTotal(){
-            return at+comment+follow;
+            return at+comment+follow+cover;
+        }
+
+        public int getCover() {
+            return cover;
+        }
+
+        public void setCover(int cover) {
+            this.cover = cover;
         }
     }
 }

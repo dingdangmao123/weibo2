@@ -15,13 +15,22 @@
 
     </android.support.design.widget.CoordinatorLayout>
 
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_gravity="bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="#cccc"/>
     <android.support.design.widget.BottomNavigationView
         android:id="@+id/tab"
         android:background="#FFFF"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         app:menu="@menu/tabs"
         app:layout_behavior=""
-        />
+        /></LinearLayout>
     </android.support.design.widget.CoordinatorLayout>

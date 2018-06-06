@@ -22,7 +22,7 @@
                 android:layout_marginTop="80dp"
                 android:textSize="30sp"
                 android:textColor="#fff"
-                android:text="Weico微博"
+                android:text="口袋小叮"
                 android:layout_marginBottom="80dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -71,7 +71,7 @@
 
                 <TextView
                     android:layout_margin="30dp"
-                    android:id="@+id/find"
+                    android:id="@+id/remember"
                     android:text="忘记密码"
                     android:textColor="#fff"
                     android:layout_weight="1"

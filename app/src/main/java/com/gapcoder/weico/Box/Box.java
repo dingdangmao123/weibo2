@@ -1,8 +1,6 @@
 package com.gapcoder.weico.Box;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.widget.TextView;
@@ -20,7 +18,6 @@ import java.io.ObjectInputStream;
 
 import butterknife.BindView;
 import butterknife.OnLongClick;
-import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class Box extends Base implements ActionSheet.ActionSheetListener {
 
@@ -29,8 +26,7 @@ public class Box extends Base implements ActionSheet.ActionSheetListener {
 
 
     @OnLongClick(R.id.text)
-    boolean delete(){
-
+    boolean delete() {
 
         ActionSheet.createBuilder(this, getSupportFragmentManager())
                 .setCancelButtonTitle("取消")
@@ -45,23 +41,24 @@ public class Box extends Base implements ActionSheet.ActionSheetListener {
     @Override
     public void init() {
 
-            Pool.run(() -> {
-                File f = new File(getCacheDir(), "box");
-                if (!f.exists())
-                    return;
-                try {
-                    ObjectInputStream in = new ObjectInputStream(new FileInputStream(f));
-                    final Post.inner ins = (Post.inner) in.readObject();
-                    UI(() -> {
-                        tv.setText(ins.getText());
-                    });
-                    in.close();
-                    tv.setText("");
+        Pool.run(() -> {
 
-                } catch (Exception e) {
-                    Log.i("tag", e.toString());
-                }
-            });
+            File f = new File(getCacheDir(), "box");
+            if (!f.exists())
+                return;
+            try {
+                ObjectInputStream in = new ObjectInputStream(new FileInputStream(f));
+                final Post.inner ins = (Post.inner) in.readObject();
+                UI(() -> {
+                    tv.setText(ins.getText());
+                });
+                in.close();
+                tv.setText("");
+
+            } catch (Exception e) {
+                Log.i("tag", e.toString());
+            }
+        });
 
     }
 
@@ -73,29 +70,30 @@ public class Box extends Base implements ActionSheet.ActionSheetListener {
 
     @Override
     public void onDismiss(ActionSheet actionSheet, boolean isCancel) {
-            actionSheet.dismiss();
+        actionSheet.dismiss();
     }
 
     @Override
     public void onOtherButtonClick(ActionSheet actionSheet, int index) {
-            switch (index){
-                case 0:
-                    File f = new File(getCacheDir(), "box");
-                    if (!f.exists())
-                        return ;
+        switch (index) {
+            case 0:
+                File f = new File(getCacheDir(), "box");
+                if (!f.exists())
+                    return;
 
-                    if(f.delete()){
-                        T.show2(this,"删除成功");
-                    }else
-                        T.show2(this,"删除失败");
-                    break;
-                case 1:
-                    Intent i=new Intent(this,Post.class);
-                    startActivity(i);
-                    finish();
-            }
+                if (f.delete()) {
+                    T.show2(this, "删除成功");
+                } else
+                    T.show2(this, "删除失败");
+                break;
+            case 1:
+                Intent i = new Intent(this, Post.class);
+                startActivity(i);
+                finish();
+        }
 
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;

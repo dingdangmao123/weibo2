@@ -11,7 +11,7 @@
         style="@style/MyToolBar"
         >
         <TextView
-            android:id="@+id/itle"
+            android:id="@+id/tv"
             android:textSize="18sp"
             android:textColor="#fff"
             android:layout_gravity="center"

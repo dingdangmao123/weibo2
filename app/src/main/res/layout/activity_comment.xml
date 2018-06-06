@@ -86,7 +86,7 @@
                     android:layout_height="wrap_content">
                     <TextView
                         android:id="@+id/text"
-                        android:textSize="20sp"
+                        android:textSize="16sp"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content" />
                     <com.jaeger.ninegridimageview.NineGridImageView
@@ -147,14 +147,15 @@
                     android:layout_weight="1"
                     android:inputType="textMultiLine"
                     android:textSize="18sp"
+                    android:textColor="@color/text"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"/>
-                <Button
+                <TextView
                     android:text="确定"
                     android:id="@+id/send"
-                    android:textColor="@color/text"
+                    android:textSize="18sp"
+                    android:textColor="@color/colorPrimary"
                     android:layout_marginLeft="10dp"
-                    android:background="@drawable/edit"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
             </LinearLayout>

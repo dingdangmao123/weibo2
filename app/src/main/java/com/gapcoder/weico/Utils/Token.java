@@ -11,6 +11,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 public class Token {
     public static String token="";
+    public static int uid=1;
     public static void exit(Context context){
         SharedPreferences.Editor editor = context.getSharedPreferences("token", MODE_PRIVATE).edit();
         editor.putString("token", "");

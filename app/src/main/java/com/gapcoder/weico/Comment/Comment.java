@@ -67,7 +67,7 @@ public class Comment extends Base {
     EditText edit;
 
     @BindView(R.id.send)
-    Button send;
+    TextView send;
     @BindView(R.id.likebtn)
     Button likebtn;
     @BindView(R.id.NineGrid)
