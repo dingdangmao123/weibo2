@@ -20,6 +20,8 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.gapcoder.weico.Config;
@@ -43,6 +45,7 @@ public class Base extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         TypeFace();
         super.onCreate(savedInstanceState);
+        beforeView();
         ActivityList.add(this);
         setContentView();
         ButterKnife.bind(this);
@@ -54,6 +57,9 @@ public class Base extends AppCompatActivity {
         }
         init();
     }
+
+    public void beforeView(){
+        }
 
     void TypeFace(){
         final Typeface typeface = Typeface.createFromAsset(getAssets(), "fz.TTF");

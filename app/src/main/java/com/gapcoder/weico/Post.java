@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
@@ -67,10 +68,6 @@ public class Post extends Base {
                     .start(this, IMAGE);
         });
 
-
-        //MultiImageSelector.create(this).
-
-
     }
 
     @OnTextChanged(R.id.text)
@@ -120,15 +117,22 @@ public class Post extends Base {
 
     void post() {
 
+        weibo = text.getText().toString();
+        if(weibo.length()==0&&url.size()==0){
+            return ;
+        }
+
         if (url.size() > 9) {
             T.show(Post.this, "你已经超过九张图片!");
             return;
         }
-        weibo = text.getText().toString();
+
         if (weibo.length() > 200) {
             T.show(Post.this, "超过长度限制");
             return;
         }
+
+
 
         Pool.run(() -> {
 
@@ -137,11 +141,13 @@ public class Post extends Base {
             map.put("text", weibo);
 
             final SysMsg r = URLService.upload("upload.php", map, url, SysMsg.class);
-            UI(() -> {
-                T.show(Post.this, r.getMsg());
-            });
+            if(r!=null) {
+                UI(() -> {
+                    T.show(Post.this, r.getMsg());
+                });
+            }
 
-            if (!r.getCode().equals(Config.SUCCESS)) {
+            if (r!=null&&!r.getCode().equals(Config.SUCCESS)) {
 
                 inner ins = new inner(weibo, url);
                 try {
@@ -240,6 +246,32 @@ public class Post extends Base {
                 notifyDataSetChanged();
                 return false;
             });
+
+            h.iv.setOnClickListener((View v)->{
+
+                int p = h.getAdapterPosition();
+                //int cur=((Post)context).container.indexOfChild(v);
+                //Log.i("tag",cur+"");
+                StringBuffer sb=new StringBuffer();
+
+                for(int i=0;i<url.size();i++)
+                    sb.append(url.get(i)+",");
+
+                sb.deleteCharAt(sb.length()-1);
+
+                Log.i("tag",sb.toString());
+
+                Intent i=new Intent(context,Photo.class);
+                Bundle b=new Bundle();
+
+                b.putString("url",sb.toString());
+                b.putInt("index",p);
+                b.putString("from","post");
+                i.putExtras(b);
+                context.startActivity(i);
+
+            });
+
 
             return h;
         }

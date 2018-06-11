@@ -1,12 +1,17 @@
 package com.gapcoder.weico.Utils;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.Environment;
 import android.util.Log;
+import android.widget.ImageView;
 
 import com.bumptech.glide.disklrucache.DiskLruCache;
+import com.gapcoder.weico.Config;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
@@ -76,6 +81,9 @@ public class DiskLRU {
         }
         return sb.toString();
     }
+
+
+
 
 
 }

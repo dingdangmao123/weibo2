@@ -124,6 +124,8 @@ public class index extends AppCompatActivity {
         //startService(service);
 
         uploadCrash();
+
+
     }
 
     protected void initSetting() {
@@ -139,6 +141,11 @@ public class index extends AppCompatActivity {
     private void uploadCrash() {
 
         final File file = new File(getCacheDir(), "crash.log");
+
+        if(!file.exists()){
+            return ;
+        }
+
         Long filelength = file.length();
         String str = null;
 
@@ -152,6 +159,7 @@ public class index extends AppCompatActivity {
         } catch (Exception e) {
 
             System.out.println(e.toString());
+
         } finally {
 
         }

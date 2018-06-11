@@ -72,12 +72,14 @@ public class Psd extends Base {
 
                 Token.exit(Psd.this);
                 Intent i=new Intent(Psd.this, Login.class);
-                String name=ActivityList.getLast().getComponentName().getClassName();
-                if(name.equals("com.gapcoder.weico.Login.Login"))
-                    startActivity(i);
-                else{
-                    ActivityList.exit();
-                }
+                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                //i.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+               // String name=ActivityList.getLast().getComponentName().getClassName();
+               // if(name.equals("com.gapcoder.weico.Login.Login"))
+                startActivity(i);
+               // else{
+               //     ActivityList.exit();
+                //}
             }
 
         });

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
@@ -22,6 +23,7 @@ import com.gapcoder.weico.General.SysMsg;
 import com.gapcoder.weico.General.URLService;
 import com.gapcoder.weico.Index.Adapter.GridAdapter;
 import com.gapcoder.weico.Index.Model.WeicoModel;
+import com.gapcoder.weico.Photo;
 import com.gapcoder.weico.R;
 import com.gapcoder.weico.User.User;
 import com.gapcoder.weico.Utils.Image;
@@ -71,30 +73,40 @@ public class MyWeicoAdapter extends RecyclerView.Adapter<MyWeicoAdapter.SnapView
 
         View view = LayoutInflater.from(mContext).inflate(R.layout.myweicoitem, parent, false);
         MyWeicoAdapter.SnapViewHolder h = new MyWeicoAdapter.SnapViewHolder(view,typeface);
-
-        h.t4.setOnLongClickListener((View v)->{
+        h.t4.setMovementMethod(LinkMovementMethod.getInstance());
+        view.setOnLongClickListener((View v)->{
             OnLongClick(h);
             return true;
         });
 
-        h.Grid.setOnLongClickListener((View v)->{
-            OnLongClick(h);
-            return true;
-        });
-
-
-
-        h.t4.setOnClickListener((View v)->{
-                Intent i = new Intent(mContext, Comment.class);
-                int p = h.getAdapterPosition();
-                i.putExtra("wid", data.get(p).getId());
-                Log.i("tag", String.valueOf(data.get(p).getId()));
-                mContext.startActivity(i);
-            }
+        view.setOnClickListener((View v)->{
+                    Intent i = new Intent(mContext, Comment.class);
+                    int p = h.getAdapterPosition();
+                    i.putExtra("wid", data.get(p).getId());
+                    Log.i("tag", String.valueOf(data.get(p).getId()));
+                    mContext.startActivity(i);
+                }
         );
 
-        return h;
+        h.Grid.setTouch(new NineView.NineClick() {
+                            @Override
+                            public void OnClick(View v) {
+                                int p = h.getAdapterPosition();
+                                int cur = h.Grid.indexOfChild(v);
+                                Intent i = new Intent(mContext, Photo.class);
+                                Bundle b = new Bundle();
+                                b.putString("url", data.get(p).getPhoto());
+                                b.putInt("index", cur);
+                                i.putExtras(b);
+                                mContext.startActivity(i);
 
+                            }
+                            @Override
+                            public boolean OnLongClick(View v) {
+                                return false;
+                            }
+                        });
+        return h;
     }
 
     void OnLongClick(SnapViewHolder h){
@@ -113,24 +125,25 @@ public class MyWeicoAdapter extends RecyclerView.Adapter<MyWeicoAdapter.SnapView
     public void onBindViewHolder(MyWeicoAdapter.SnapViewHolder h, int position) {
 
         WeicoModel.InnerBean m = data.get(position);
-
         String[] ss= Time.format2(m.getTime()).split(" ");
         if(ss.length>1)
             h.t1.setText(ss[1]);
-
         h.t2.setText(ss[0]);
-        h.t4.setMovementMethod(LinkMovementMethod.getInstance());
-        h.t4.setText(parse.parse(m.getText()));
+
+
+
+        if(m.getText().length()>0) {
+            h.t4.setText(parse.parse(m.getText()));
+            h.t4.setVisibility(View.VISIBLE);
+        }else
+            h.t4.setVisibility(View.GONE);
 
         if(Config.mode) {
-
             h.Grid.setVisibility(View.GONE);
-
         }else {
 
             if (m.getPhoto().length() > 0)
                 h.Grid.setUrl((Activity) mContext, new ArrayList(Arrays.asList(m.getPhoto().split(","))));
-
             if (m.getPhoto().length() == 0) {
                 h.Grid.setVisibility(View.GONE);
             } else {
@@ -153,7 +166,6 @@ public class MyWeicoAdapter extends RecyclerView.Adapter<MyWeicoAdapter.SnapView
         if(deleteid<=0)
             return ;
 
-
         Pool.run(()->{
 
             HashMap<String, String> map = new HashMap<>();
@@ -168,8 +180,6 @@ public class MyWeicoAdapter extends RecyclerView.Adapter<MyWeicoAdapter.SnapView
                 notifyDataSetChanged();
                 T.show(mContext, r.getMsg());
             });
-
-
         });
     }
 
@@ -179,8 +189,6 @@ public class MyWeicoAdapter extends RecyclerView.Adapter<MyWeicoAdapter.SnapView
     }
 
     static class SnapViewHolder extends RecyclerView.ViewHolder {
-
-
         ViewGroup p;
         NineView Grid;
         TextView t1;
@@ -188,17 +196,14 @@ public class MyWeicoAdapter extends RecyclerView.Adapter<MyWeicoAdapter.SnapView
         TextView t4;
         TextView t5;
         TextView t6;
-
         public SnapViewHolder(View itemView,Typeface tf) {
             super(itemView);
-
             p=(ViewGroup)itemView.findViewById(R.id.p);
             Grid = (NineView) itemView.findViewById(R.id.NineGrid);
             t1 = (TextView) itemView.findViewById(R.id.unit);
             t2 = (TextView) itemView.findViewById(R.id.time);
             t4 = (TextView) itemView.findViewById(R.id.text);
             t4.setTypeface(tf);
-
         }
     }
 }

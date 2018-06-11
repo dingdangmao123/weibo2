@@ -4,14 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.Typeface;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
-import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
-import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,24 +18,19 @@ import com.gapcoder.weico.Account.Account;
 import com.gapcoder.weico.Comment.Comment;
 import com.gapcoder.weico.Config;
 import com.gapcoder.weico.Index.Model.WeicoModel;
+import com.gapcoder.weico.Photo;
 import com.gapcoder.weico.R;
-import com.gapcoder.weico.Title.Title;
 import com.gapcoder.weico.User.User;
 import com.gapcoder.weico.Utils.Image;
 import com.gapcoder.weico.Utils.LinkText;
-import com.gapcoder.weico.Utils.T;
 import com.gapcoder.weico.Utils.Time;
 import com.gapcoder.weico.Utils.Token;
+import com.gapcoder.weico.Views.NineView.ArrowTextView;
 import com.gapcoder.weico.Views.NineView.NineView;
-import com.jaeger.ninegridimageview.NineGridImageView;
-import com.jaeger.ninegridimageview.NineGridImageViewAdapter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
-
-import static java.security.AccessController.getContext;
 
 /**
  * Created by suxiaohui on 2018/3/2.
@@ -67,16 +58,16 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
 
     @Override
     public SnapViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        //加载item 布局文件
         View view = LayoutInflater.from(mContext).inflate(R.layout.weicoitem, parent, false);
         final SnapViewHolder h = new SnapViewHolder(view,typeface);
-        h.t4.setOnClickListener(new View.OnClickListener() {
+        h.t4.setMovementMethod(LinkMovementMethod.getInstance());
+        view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent i = new Intent(mContext, Comment.class);
                 int p = h.getAdapterPosition();
                 i.putExtra("wid", data.get(p).getId());
-                Log.i("tag", String.valueOf(data.get(p).getId()));
+               // Log.i("tag", String.valueOf(data.get(p).getId()));
                 mContext.startActivity(i);
 
             }
@@ -85,12 +76,9 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
         h.t1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent i=null;
                 int p = h.getAdapterPosition();
                 int id=data.get(p).getUid();
-                Log.i("t1",id+"");
-
                 if(Token.uid!=id)
                    i = new Intent(mContext, User.class);
                 else
@@ -100,8 +88,26 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
                 mContext.startActivity(i);
             }
         });
-        return h;
 
+        h.Grid.setTouch(new NineView.NineClick() {
+            @Override
+            public void OnClick(View v) {
+                int p = h.getAdapterPosition();
+                int cur=h.Grid.indexOfChild(v);
+                Intent i=new Intent(mContext,Photo.class);
+                Bundle b=new Bundle();
+                b.putString("url",data.get(p).getPhoto());
+                b.putInt("index",cur);
+                i.putExtras(b);
+                mContext.startActivity(i);
+            }
+            @Override
+            public boolean OnLongClick(View v) {
+                return false;
+            }
+        });
+
+        return h;
     }
 
     @Override
@@ -110,26 +116,35 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
         WeicoModel.InnerBean m = data.get(position);
         h.t1.setText(m.getName());
         h.t2.setText(Time.format(m.getTime()));
-        h.t4.setMovementMethod(LinkMovementMethod.getInstance());
-        h.t4.setText(parse.parse(m.getText()));
 
-        if(m.getComment()>0) {
-            h.t5.setText(String.valueOf(m.getComment()) + "评论");
-            h.t5.setVisibility(View.VISIBLE);
-        }else
-            h.t5.setVisibility(View.GONE);
 
-        if(m.getLove()>0) {
-            h.t6.setText(String.valueOf(m.getLove() + "赞"));
-            h.t6.setVisibility(View.VISIBLE);
+        if(m.getText().length()>0) {
+            h.t4.setText(parse.parse(m.getText()));
+            h.t4.setVisibility(View.VISIBLE);
         }else
-            h.t6.setVisibility(View.GONE);
+            h.t4.setVisibility(View.GONE);
+
+        if(m.getComment()+m.getLove()>0){
+
+            String s="";
+            if(m.getLove()>0)
+                s=m.getLove()+" 赞";
+            if(m.getComment()>0)
+                if(s.length()>0)
+                    s=s+"   "+m.getComment()+" 评论";
+                else
+                    s=m.getComment()+" 评论";
+
+            h.arrow.setText(s);
+            h.arrow.setVisibility(View.VISIBLE);
+        }else{
+            h.arrow.setVisibility(View.GONE);
+        }
 
         String face=Config.face+m.getFace();
         if (h.face.getTag()!=null&&!face.equals((String) h.face.getTag()))
             h.face.setImageBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.drawable.face));
 
-        //h.Grid.setAdapter(mAdapter);
         if(Config.mode) {
 
             h.Grid.setVisibility(View.GONE);
@@ -163,26 +178,22 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
         TextView t1;
         TextView t2;
         TextView t4;
-        TextView t5;
-        TextView t6;
+
+        ArrowTextView arrow;
 
         public SnapViewHolder(View itemView,Typeface tf) {
             super(itemView);
 
             Grid = (NineView) itemView.findViewById(R.id.NineGrid);
             face = (ImageView) itemView.findViewById(R.id.face);
+            arrow=(ArrowTextView) itemView.findViewById(R.id.arrow);
             t1 = (TextView) itemView.findViewById(R.id.name);
             t2 = (TextView) itemView.findViewById(R.id.time);
             t4 = (TextView) itemView.findViewById(R.id.text);
-            t5 = (TextView) itemView.findViewById(R.id.comment);
-            t6 = (TextView) itemView.findViewById(R.id.like);
 
             t1.setTypeface(tf);
             t2.setTypeface(tf);
             t4.setTypeface(tf);
-            t5.setTypeface(tf);
-            t6.setTypeface(tf);
-
         }
     }
 }

@@ -6,6 +6,8 @@ import com.gapcoder.weico.Config;
 import com.google.gson.Gson;
 
 import java.io.File;
+import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -43,15 +45,22 @@ public class URLService {
             SysMsg m= gson.fromJson(json, clz);
             return m;
 
-        } catch (Exception e) {
-            Log.i("tag", e.toString());
-            return new SysMsg("error","系统出错了!");
+        }catch(ConnectException e) {
+            return new SysMsg("error","网络异常，请检查网络!");
+        }catch(SocketTimeoutException e) {
+
+            return new SysMsg("error","网络连接超时!");
+
+        }catch (Exception e) {
+
+            return new SysMsg("error",e.toString());
         }
     }
     public  static <T extends SysMsg> SysMsg get(String url,Class<T> clz) {
 
         try {
 
+            Log.i("tag",Config.url+url);
             OkHttpClient cli = new OkHttpClient();
             Request req = new Request.Builder().url(Config.url+url).build();
             Response res = cli.newCall(req).execute();
@@ -61,10 +70,16 @@ public class URLService {
             SysMsg m= gson.fromJson(json, clz);
             return m;
 
-        } catch (Exception e) {
+        }catch(ConnectException e) {
+            return new SysMsg("error","网络异常，请检查网络!");
+        } catch(SocketTimeoutException e) {
+
+            return new SysMsg("error","网络连接超时!");
+
+        }catch (Exception e) {
 
             Log.i("tag", e.toString());
-            return new SysMsg("error","系统出错了");
+            return new SysMsg("error",e.toString());
         }
 
     }
@@ -82,11 +97,15 @@ public class URLService {
                 String v=map.get(k);
                 builder.addFormDataPart(k,v);
             }
-
+            
             for(int i=0;i<file.size();i++) {
+                Log.i("tag",file.get(i));
                 String[] suffix=file.get(i).split("\\.");
                 builder.addFormDataPart("image"+i, file.get(i),
                         RequestBody.create(MediaType.parse("image/"+suffix[suffix.length-1]), new File(file.get(i))));
+                String[] t=file.get(i).split("/");
+                Log.i("tag",t[t.length-1]);
+                builder.addFormDataPart(t[t.length-1].split("\\.")[0],i+"");
             }
 
             Request req = new Request.Builder().url(Config.url+url).post(builder.build()).build();
@@ -96,6 +115,14 @@ public class URLService {
             Gson gson = new Gson();
             SysMsg m= gson.fromJson(json, clz);
             return m;
+
+        }catch(ConnectException e) {
+
+            return new SysMsg("error","网络异常，请检查网络!");
+
+        } catch(SocketTimeoutException e) {
+
+            return new SysMsg("error","网络连接超时!");
 
         } catch (Exception e) {
             Log.i("tag", e.toString());

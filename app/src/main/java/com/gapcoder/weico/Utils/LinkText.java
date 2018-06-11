@@ -29,8 +29,8 @@ public class LinkText {
     final String  weico="(@[^\\s@]+)";
     final String url="(https?://(/|[0-9a-zA-Z]|\\.|%)+)";
 
-     Pattern T = Pattern.compile(title);
-     Pattern W = Pattern.compile(weico);
+    Pattern T = Pattern.compile(title);
+    Pattern W = Pattern.compile(weico);
     Pattern U = Pattern.compile(url);
     Context context;
 
@@ -39,9 +39,8 @@ public class LinkText {
     }
 
     public  CharSequence parse(String text){
+
         SpannableString span= new SpannableString(text);
-
-
         Matcher m=T.matcher(text);
         while(m.find()) {
             ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#0099EE"));
@@ -56,11 +55,13 @@ public class LinkText {
         }
 
         m=U.matcher(text);
+
         while(m.find()) {
             ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#0099EE"));
             span.setSpan(colorSpan, m.start(), m.end(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
             span.setSpan(new LinkSpan(m.group()), m.start(), m.end(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
         }
+
         return span;
     }
 

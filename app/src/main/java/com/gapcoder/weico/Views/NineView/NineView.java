@@ -2,6 +2,7 @@ package com.gapcoder.weico.Views.NineView;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -9,10 +10,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.gapcoder.weico.Config;
 import com.gapcoder.weico.R;
+import com.gapcoder.weico.Utils.Compress;
+import com.gapcoder.weico.Utils.Curl;
+import com.gapcoder.weico.Utils.DiskLRU;
 import com.gapcoder.weico.Utils.Image;
+import com.gapcoder.weico.Utils.Pool;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -27,7 +36,11 @@ public class NineView extends ViewGroup {
     private List<String> url = null;
     private int singleW = 300;
     private int singleH = 300;
-    private int gap = 10;
+    private NineClick touch;
+
+
+
+    private int gap = 8;
     private int size = 0;
     private int l = 0;
     private int w = 0;
@@ -53,9 +66,10 @@ public class NineView extends ViewGroup {
         int width = widthSize;
         int height = 0;
 
-        if (url == null)
+        if (url == null) {
+            setMeasuredDimension(width, height);
             return;
-
+        }
         if (url.size() == 1) {
 
             MyImage c = (MyImage) getChildAt(0);
@@ -163,8 +177,37 @@ public class NineView extends ViewGroup {
         int l = url.size();
         if (l == 0)
             return;
-        Log.i("tag", url.size() + " ");
-        removeAllViews();
+
+        int c=getChildCount();
+        if(c>l){
+            removeViews(l,c-l);
+        }else if(c<l){
+            for(int i=c;i<l;i++){
+                MyImage iv=new MyImage(context);
+                if(touch!=null){
+
+                    iv.setOnLongClickListener((View v)->{
+                        return touch.OnLongClick(v);
+                    });
+
+                    iv.setOnClickListener((View v)->{touch.OnClick(v);});
+                }
+                addView(iv);
+            }
+        }
+
+        for (int i=0;i<l;i++) {
+            MyImage iv = (MyImage) getChildAt(i);
+            String u = url.get(i);
+            String[] n = u.split("\\.");
+            n = n[n.length - 2].split("_");
+            iv.setW(Integer.parseInt(n[n.length - 2]));
+            iv.setH(Integer.parseInt(n[n.length - 1]));
+            iv.setTag(u);
+            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            iv.setImageResource(R.drawable.holder);
+        }
+        /*removeAllViews();
 
         for (String u : url) {
             Log.i("tag", u);
@@ -176,8 +219,19 @@ public class NineView extends ViewGroup {
             iv.setTag(u);
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
             iv.setImageResource(R.drawable.holder);
-            addView(iv);
-        }
+            if(touch!=null){
+
+                iv.setOnLongClickListener((View v)->{
+                    return touch.OnLongClick(v);
+                });
+
+                iv.setOnClickListener((View v)->{touch.OnClick(v);});
+            }
+
+            addView(iv);*/
+
+
+        //}
     }
 
     public int getGap() {
@@ -192,14 +246,8 @@ public class NineView extends ViewGroup {
         return size;
     }
 
-    public void displayImage(Context context, ImageView iv, String url) {
-        iv.setTag(Config.photo + url);
-        Image.down((Activity) context, iv, Config.photo + url, 100, 100);
-    }
-
     public void displayOneImage(Context context, ImageView iv, String url, int w, int h) {
-        iv.setTag(Config.photo + url);
-        Image.down((Activity) context, iv, Config.photo + url, w, h);
+        Image.down(context,iv,url,w,h);
     }
 
     static class MyImage extends ImageView {
@@ -237,4 +285,18 @@ public class NineView extends ViewGroup {
             this.h = h;
         }
     }
+
+    public NineClick getTouch() {
+        return touch;
+    }
+
+    public void setTouch(NineClick touch) {
+        this.touch = touch;
+    }
+
+   public interface NineClick{
+        void OnClick(View v);
+        boolean OnLongClick(View v);
+    }
+
 }

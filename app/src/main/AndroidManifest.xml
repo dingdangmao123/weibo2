@@ -19,14 +19,14 @@
         <activity
             android:name=".Login.Login"
             android:label=""
-            android:theme="@style/SplashTheme"
-            android:launchMode="singleTask">
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity"
             android:configChanges="orientation|screenSize"
@@ -34,7 +34,6 @@
         <activity
             android:name=".Index.index"
             android:label=""
-            android:launchMode="singleTask"
             android:windowSoftInputMode="adjustPan|stateHidden" />
         <activity
             android:name=".Post"
@@ -86,10 +85,13 @@
         <activity
             android:name=".Store"
             android:label="" />
-        <activity android:name=".Remember"
-            android:label=""
-            />
-        <activity android:name=".Passwd"
+        <activity
+            android:name=".Remember"
+            android:label="" />
+        <activity
+            android:name=".Passwd"
+            android:label="" />
+        <activity android:name=".Photo"
             android:label=""
             ></activity>
     </application>

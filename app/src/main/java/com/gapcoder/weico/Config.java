@@ -6,7 +6,7 @@ package com.gapcoder.weico;
 
 public class Config {
 
-    public static String ip="192.168.137.1";
+    public static String ip="116.85.17.164";
     public static String url="http://"+ip+"/weico/";
     public static String photo="http://"+ip+"/weico/photo/";
     public static String bg="http://"+ip+"/weico/bg/";

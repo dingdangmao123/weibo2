@@ -30,11 +30,13 @@
                 android:textSize="18sp" />
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
-
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="?attr/actionBarSize">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="?attr/actionBarSize"
         android:orientation="vertical">
 
         <EditText
@@ -65,6 +67,8 @@
             android:layout_margin="12dp"
             android:layout_gravity="center_vertical"
             android:id="@+id/select"
+            android:backgroundTint="#000000"
+            android:backgroundTintMode="multiply"
             android:background="@mipmap/ic_photo"
             android:scaleType="centerCrop"
             android:layout_width="wrap_content"
@@ -82,4 +86,5 @@
             android:layout_height="wrap_content" />
         </LinearLayout>
     </LinearLayout>
+    </ScrollView>
 </android.support.design.widget.CoordinatorLayout>

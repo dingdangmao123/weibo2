@@ -1,5 +1,6 @@
 package com.gapcoder.weico.Comment;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.method.LinkMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -20,6 +22,7 @@ import com.gapcoder.weico.General.Base;
 import com.gapcoder.weico.General.SysMsg;
 import com.gapcoder.weico.General.URLService;
 import com.gapcoder.weico.Index.Adapter.GridAdapter;
+import com.gapcoder.weico.Photo;
 import com.gapcoder.weico.R;
 import com.gapcoder.weico.User.User;
 import com.gapcoder.weico.Utils.Curl;
@@ -28,7 +31,7 @@ import com.gapcoder.weico.Utils.Pool;
 import com.gapcoder.weico.Utils.T;
 import com.gapcoder.weico.Utils.Time;
 import com.gapcoder.weico.Utils.Token;
-import com.jaeger.ninegridimageview.NineGridImageView;
+import com.gapcoder.weico.Views.NineView.NineView;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
@@ -40,7 +43,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class Comment extends Base {
@@ -70,8 +72,9 @@ public class Comment extends Base {
     TextView send;
     @BindView(R.id.likebtn)
     Button likebtn;
+
     @BindView(R.id.NineGrid)
-    NineGridImageView NineGrid;
+    NineView NineGrid;
 
     private Comm.InnerBean data = new Comm.InnerBean();
     private CommentAdapter adapter;
@@ -210,6 +213,25 @@ public class Comment extends Base {
                     rf.finishLoadmore();
             }
         });
+
+        NineGrid.setTouch(new NineView.NineClick() {
+            @Override
+            public void OnClick(View v) {
+
+                int cur=NineGrid.indexOfChild(v);
+                Intent i=new Intent(Comment.this,Photo.class);
+                Bundle b=new Bundle();
+                b.putInt("index",cur);
+                b.putString("url",m.getPhoto());
+                i.putExtras(b);
+                startActivity(i);
+            }
+            @Override
+            public boolean OnLongClick(View v) {
+                return false;
+            }
+        });
+
         getWeico();
         Refresh(1);
     }
@@ -234,15 +256,20 @@ public class Comment extends Base {
                         face.setImageBitmap(bit);
                         name.setText(m.getName());
                         time.setText(Time.format(m.getTime()));
-                        text.setMovementMethod(LinkMovementMethod.getInstance());
-                        text.setText(parse.parse(m.getText()));
+                        if(m.getText().length()>0) {
+                            text.setMovementMethod(LinkMovementMethod.getInstance());
+                            text.setText(parse.parse(m.getText()));
+                            text.setVisibility(View.VISIBLE);
+                        }else{
+                            text.setVisibility(View.GONE);
+                        }
                         comment.setText(String.valueOf(m.getComment()) + "评论");
                         like.setText(String.valueOf(m.getLove() + "赞"));
+
                         if(m.getPhoto().length()==0)
                             NineGrid.setVisibility(View.GONE);
                         else{
-                            NineGrid.setAdapter(new GridAdapter(Comment.this));
-                            NineGrid.setImagesData(new ArrayList(Arrays.asList(m.getPhoto().split(","))));
+                            NineGrid.setUrl(Comment.this, new ArrayList(Arrays.asList(m.getPhoto().split(","))));
                         }
                     }
                 });

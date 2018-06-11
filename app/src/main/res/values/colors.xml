@@ -11,5 +11,5 @@
     <color name="weicoBtn">#1685a9</color>
     <color name="weicoBg">#4F94CD</color>
     <color name="highlight">#0099EE</color>
-
+    <color name="transparent">#00000000</color>
 </resources>

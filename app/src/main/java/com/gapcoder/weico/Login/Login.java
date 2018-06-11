@@ -10,12 +10,14 @@ import android.support.v4.view.LayoutInflaterFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.AppCompatDelegate;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.gapcoder.weico.General.Base;
 import com.gapcoder.weico.General.SysMsg;
 import com.gapcoder.weico.General.URLService;
 import com.gapcoder.weico.Index.index;
@@ -32,7 +34,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class Login extends AppCompatActivity {
+public class Login extends Base {
 
     Handler mh = new Handler();
     @BindView(R.id.name)
@@ -42,31 +44,29 @@ public class Login extends AppCompatActivity {
     @BindView(R.id.login)
     Button login;
 
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void setContentView() {
+        setContentView(R.layout.activity_login);
+    }
 
-        final Typeface typeface = Typeface.createFromAsset(getAssets(), "fz.TTF");
 
-        LayoutInflaterCompat.setFactory(LayoutInflater.from(this), new LayoutInflaterFactory() {
-            @Override
-            public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
-                AppCompatDelegate delegate = getDelegate();
-                View view = delegate.createView(parent, name, context, attrs);
+    @Override
+    public void init() {
 
-                if (view != null && (view instanceof TextView)) {
-                    ((TextView) view).setTypeface(typeface);
-                }
-                return view;
-            }
-        });
-        super.onCreate(savedInstanceState);
+        Log.i("tag","init");
         Token.initToken(this);
         if (!Token.token.equals("")) {
             Intent i = new Intent(Login.this, index.class);
             Login.this.startActivity(i);
         }
-        setContentView(R.layout.activity_login);
-        ButterKnife.bind(this);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        //
+        Log.i("tag","onNewIntent");
+
     }
 
     @OnClick(R.id.login)
@@ -84,8 +84,6 @@ public class Login extends AppCompatActivity {
             T.show2(Login.this,"手机和密码不合法!");
             return ;
         }
-
-
 
         Pool.run(() -> {
             HashMap<String, String> map = new HashMap<>();
@@ -115,10 +113,8 @@ public class Login extends AppCompatActivity {
         Intent i = new Intent(this, Register.class);
         startActivity(i);
     }
-
     @OnClick(R.id.remember)
     void remember() {
-
         Intent i = new Intent(this, Remember.class);
         startActivity(i);
     }
