@@ -3,6 +3,8 @@ package com.gapcoder.weico.Utils;
 import android.content.Context;
 import android.util.Log;
 
+import com.gapcoder.weico.App;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -42,6 +44,9 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
             p.close();
         }
 
-        android.os.Process.killProcess(android.os.Process.myPid());
+       // android.os.Process.killProcess(android.os.Process.myPid());
+
+        App.ins.handler.uncaughtException(t,e);
+
     }
 }

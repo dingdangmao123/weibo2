@@ -3,6 +3,8 @@ package com.gapcoder.weico.Utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.gapcoder.weico.App;
+
 import static android.content.Context.MODE_PRIVATE;
 
 /**
@@ -27,5 +29,13 @@ public class Token {
         editor.putString("token",token);
         editor.apply();
         Token.token=token;
+    }
+
+    public static String getToken(){
+
+        if(token.length()!=0)
+            return token;
+        initToken(App.ins);
+        return token;
     }
 }

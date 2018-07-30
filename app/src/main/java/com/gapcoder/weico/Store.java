@@ -30,10 +30,10 @@ public class Store extends Base {
     TextView total1;
     @BindView(R.id.useable1)
     TextView useable1;
-    @BindView(R.id.total2)
+/*    @BindView(R.id.total2)
     TextView total2;
     @BindView(R.id.useable2)
-    TextView useable2;
+    TextView useable2;*/
 
 
     @OnClick(R.id.clear)
@@ -52,6 +52,7 @@ public class Store extends Base {
             UI(()->{
                 T.show2(Store.this,s);
                 clear.setText("清除缓存");
+                cache.setText("微博缓存空间: 0B");
             });
 
         });
@@ -64,8 +65,8 @@ public class Store extends Base {
         useable1.setText("SD卡可用空间: " + StoreSize.getSDAvailableSize(this));
         total1.setText("SD卡全部空间: " + StoreSize.getSDTotalSize(this));
 
-        useable2.setText("手机内部可用空间: " + StoreSize.getRomAvailableSize(this));
-        total2.setText("手机内部全部空间: " + StoreSize.getRomTotalSize(this));
+       // useable2.setText("手机内部可用空间: " + StoreSize.getRomAvailableSize(this));
+       // total2.setText("手机内部全部空间: " + StoreSize.getRomTotalSize(this));
 
         Pool.run(()->{
                 String res= Formatter.formatFileSize(Store.this,FileUtils.getSize(DiskLRU.getCacheDir(Store.this)));

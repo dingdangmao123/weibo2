@@ -100,9 +100,7 @@ public class Comment extends Base {
 
     @OnClick(R.id.likebtn)
     void like() {
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
+        Pool.run(()->{
                 HashMap<String, String> map = new HashMap<>();
                 map.put("wid", "" + wid);
                 map.put("token", Token.token);
@@ -111,31 +109,20 @@ public class Comment extends Base {
                 if (!check(r, rf)) {
                     return;
                 }
-
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
-                        T.show(Comment.this, r.getMsg());
-                    }
+                UI(()->{
+                    T.show(Comment.this, r.getMsg());
                 });
-
-            }
         });
     }
 
     @OnClick(R.id.send)
     void send() {
-
         final String s=edit.getText().toString();
         if(s.length()>200){
             T.show(this,"评论字数超过限制!");
             return ;
         }
-
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
-
+        Pool.run(()->{
                 HashMap<String, String> map = new HashMap<>();
                 map.put("wid", "" + wid);
                 map.put("token", Token.token);
@@ -143,25 +130,18 @@ public class Comment extends Base {
                 map.put("cid", "" + cid);
                 map.put("cuid", "" + cuid);
                 map.put("text", s);
-
                 final SysMsg r = URLService.post("reply.php", map, SysMsg.class);
                 if (!check(r, rf)) {
                     return;
                 }
-
                 cid = 0;
                 cuid = 0;
-
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
+                UI(()->{
                         edit.setHint("输入评论");
                         edit.setText("");
                         hintKeyboard();
                         T.show(Comment.this, r.getMsg());
-                    }
                 });
-            }
         });
     }
 
@@ -197,21 +177,15 @@ public class Comment extends Base {
         tl.setAdapter(adapter);
         tl.setNestedScrollingEnabled(false);
 
-        rf.setOnRefreshListener(new OnRefreshListener() {
-            @Override
-            public void onRefresh(RefreshLayout refreshlayout) {
+        rf.setOnRefreshListener((refreshlayout)->{
                 getWeico();
                 Refresh(1);
-            }
         });
-        rf.setOnLoadmoreListener(new OnLoadmoreListener() {
-            @Override
-            public void onLoadmore(RefreshLayout refreshlayout) {
+        rf.setOnLoadmoreListener((refreshlayout)->{
                 if(data.getComment().size()>0)
                     Refresh(0);
                 else
                     rf.finishLoadmore();
-            }
         });
 
         NineGrid.setTouch(new NineView.NineClick() {
@@ -239,10 +213,7 @@ public class Comment extends Base {
 
     void getWeico() {
 
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
-
+        Pool.run(()->{
                 String url = "get.php?wid=" + wid;
                 final SysMsg t = URLService.get(url, CommWeicoModel.class);
                 if (!check(t, rf)) {
@@ -250,9 +221,7 @@ public class Comment extends Base {
                 }
                 m = ((CommWeicoModel) t).getInner();
                 final Bitmap bit = Curl.getImage(Config.face+m.getFace());
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
+                UI(()->{
                         face.setImageBitmap(bit);
                         name.setText(m.getName());
                         time.setText(Time.format(m.getTime()));
@@ -265,15 +234,12 @@ public class Comment extends Base {
                         }
                         comment.setText(String.valueOf(m.getComment()) + "评论");
                         like.setText(String.valueOf(m.getLove() + "赞"));
-
                         if(m.getPhoto().length()==0)
                             NineGrid.setVisibility(View.GONE);
                         else{
                             NineGrid.setUrl(Comment.this, new ArrayList(Arrays.asList(m.getPhoto().split(","))));
                         }
-                    }
                 });
-            }
         });
     }
 
@@ -289,10 +255,7 @@ public class Comment extends Base {
             id = data.getComment().get(list.size() - 1).getId();
         }
 
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
-
+        Pool.run(()->{
                 String url = "comment.php?wid=" + wid + "&flag=" + flag + "&id=" + id;
                 final SysMsg t = URLService.get(url, Comm.class);
                 if (!check(t, rf)) {
@@ -316,14 +279,10 @@ public class Comment extends Base {
                     }
                 }
 
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
+                UI(()->{
                         SmartRefresh(rf);
                         adapter.notifyDataSetChanged();
-                    }
                 });
-            }
         });
     }
 
@@ -331,5 +290,4 @@ public class Comment extends Base {
     public boolean onCreateOptionsMenu(Menu menu) {
         return true;
     }
-
 }

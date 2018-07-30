@@ -52,7 +52,7 @@ public class WeicoFG extends BaseFG {
     String type = "new";
     boolean reset = false;
     int current = 1;
-    int cache = 20;
+    int cache = 40;
     int id = 0;
 
     @BindView(R.id.timeline)
@@ -68,7 +68,8 @@ public class WeicoFG extends BaseFG {
     TextView title;
 
     public WeicoFG() {
-       // EventBus.getDefault().register(this);
+       super();// EventBus.getDefault().register(this);
+        Log.i("tag","WeicoFG");
     }
 
     View init(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

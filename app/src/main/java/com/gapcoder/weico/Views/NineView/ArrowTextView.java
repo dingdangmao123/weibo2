@@ -72,9 +72,11 @@ public class ArrowTextView extends View {
         if (widthMode == MeasureSpec.EXACTLY) {
             w = widthSize;
         } else {
+
             Rect r = new Rect();
             p.getTextBounds(text, 0, text.length(), r);
             w = r.width() + getPaddingLeft() + getPaddingRight();
+
         }
 
 

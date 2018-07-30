@@ -59,6 +59,7 @@ public class Login extends Base {
         if (!Token.token.equals("")) {
             Intent i = new Intent(Login.this, index.class);
             Login.this.startActivity(i);
+            finish();
         }
     }
 

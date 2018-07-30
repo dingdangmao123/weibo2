@@ -1,7 +1,5 @@
 package com.gapcoder.weico.General;
 
-import android.Manifest;
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
@@ -20,12 +18,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.gapcoder.weico.Config;
-import com.gapcoder.weico.Post;
 import com.gapcoder.weico.R;
 import com.gapcoder.weico.Utils.ActivityList;
 import com.gapcoder.weico.Utils.T;
@@ -173,4 +168,5 @@ public class Base extends AppCompatActivity {
                 }else
                     T.show(this,"你没有允许权限");
     }
+
 }

@@ -32,36 +32,49 @@ import butterknife.Unbinder;
  * Created by suxiaohui on 2018/3/2.
  */
 
-public class BaseFG extends Fragment{
+public class BaseFG extends Fragment {
 
     private Unbinder binder;
+    private String name;
 
     public BaseFG() {
+        name=this.getClass().getName();
+        Log.i("tag",name);
+    }
 
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v=init(inflater,container,savedInstanceState);
-        binder = ButterKnife.bind(this,v);
-        Toolbar toolbar=(Toolbar)v.findViewById(R.id.toolbar);
+        View v = init(inflater, container, savedInstanceState);
+        binder = ButterKnife.bind(this, v);
+        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        android.support.v7.app.ActionBar bar=((AppCompatActivity) getActivity()).getSupportActionBar();
-        if(bar!=null){
+        android.support.v7.app.ActionBar bar = ((AppCompatActivity) getActivity()).getSupportActionBar();
+        if (bar != null) {
             setLeftIcon(bar);
         }
         setHasOptionsMenu(true);
-        CreateView(inflater,container,savedInstanceState,v);
+        CreateView(inflater, container, savedInstanceState, v);
         return v;
     }
 
-  void CreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState,View v){
+    void CreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState, View v) {
 
-  }
-    View init(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
+    }
+
+    View init(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return null;
     }
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
@@ -72,7 +85,7 @@ public class BaseFG extends Fragment{
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.photo:
-                Intent i=new Intent(getActivity(),Post.class);
+                Intent i = new Intent(getActivity(), Post.class);
                 startActivity(i);
                 break;
             case android.R.id.home:
@@ -81,14 +94,16 @@ public class BaseFG extends Fragment{
         }
         return false;
     }
-    public void leftSelected(){
+
+    public void leftSelected() {
 
     }
-    public void setLeftIcon(android.support.v7.app.ActionBar bar){
+
+    public void setLeftIcon(android.support.v7.app.ActionBar bar) {
 
     }
 
-    boolean check(final SysMsg m, final SmartRefreshLayout rf){
+    boolean check(final SysMsg m, final SmartRefreshLayout rf) {
         if (!m.getCode().equals(Config.SUCCESS)) {
             UI(new Runnable() {
                 @Override
@@ -102,16 +117,16 @@ public class BaseFG extends Fragment{
         return true;
     }
 
-    public void SmartRefresh(SmartRefreshLayout rf){
-        if(rf!=null) {
-            if(rf.isRefreshing())
+    public void SmartRefresh(SmartRefreshLayout rf) {
+        if (rf != null) {
+            if (rf.isRefreshing())
                 rf.finishRefresh(true);
-            if(rf.isLoading())
+            if (rf.isLoading())
                 rf.finishLoadmore(true);
         }
     }
 
-    void UI(Runnable r){
+    void UI(Runnable r) {
         getActivity().runOnUiThread(r);
     }
 

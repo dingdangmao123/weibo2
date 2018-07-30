@@ -35,10 +35,12 @@ public class NineView extends ViewGroup {
     private Context context;
     private List<String> url = null;
     private int singleW = 300;
-    private int singleH = 300;
+    private int singleH = 500;
     private NineClick touch;
 
 
+    private float ratioW=0.66667f;
+    private float ratioH=0.8f;
 
     private int gap = 8;
     private int size = 0;
@@ -66,6 +68,9 @@ public class NineView extends ViewGroup {
         int width = widthSize;
         int height = 0;
 
+        singleW=(int)(width*ratioW);
+        singleH=(int)(width*ratioH);
+
         if (url == null) {
             setMeasuredDimension(width, height);
             return;
@@ -76,30 +81,46 @@ public class NineView extends ViewGroup {
             int w = c.getW();
             int h = c.getH();
 
-            if(w>h){
 
-                if(w<singleW){
-                    this.w=w;
-                    this.h=h;
-                }else{
-                    this.w=singleW;
-                    this.h=singleW*h/w;
-                }
+
+            if(w<=singleW&&h<=singleH){
+
+                this.w=w;
+                this.h=h;
+
+            }else if(w<=singleW){
+
+                this.w=w*singleH/h;
+                this.h=h;
+
+            }else if(w>singleW&&h<=singleH){
+
+                this.w=singleW;
+                this.h=h*singleW/w;
 
             }else{
 
-                if(h<singleH){
-                    this.w=w;
-                    this.h=h;
-                }else{
-                    this.h=singleH;
-                    this.w=singleH*w/h;
-                }
+                 final float e=0.0000001f;
+                 float k1=singleH*1.0f/h;
+                 float k2=singleW*1.0f/w;
+
+                if(k1-k2>e){
+                        k1=k2;
+                    }
+
+                 this.w=(int)(w*k1);
+                 this.h=(int)(h*k1);
+
             }
 
             height=this.h;
+            LayoutParams lp=c.getLayoutParams();
+            if(lp==null){
+                lp=new LayoutParams(this.w,this.h);
+            }
 
-            Log.i("tag", this.w + " "+this.h);
+            c.setLayoutParams(lp);
+
         } else if (url.size() == 4) {
             width = widthSize;
             size = (width - 2 * gap) / 3;
@@ -126,8 +147,10 @@ public class NineView extends ViewGroup {
         if (ll == 1) {
 
             View c = getChildAt(0);
-            c.layout(0, 0, w, h);
-            load(context, (ImageView) c, c.getTag().toString());
+            LayoutParams lp=c.getLayoutParams();
+            c.layout(0, 0, this.w, this.h);
+            MyImage mi=(MyImage)c;
+            load(context, mi,mi.getUrl());
 
         } else if (url.size() == 4) {
 
@@ -139,8 +162,16 @@ public class NineView extends ViewGroup {
                     left = 0;
                     top = size + gap;
                 }
-                c.layout(left, top, left + size, top + size);
-                load(context, (ImageView) c, c.getTag().toString());
+                LayoutParams lp=c.getLayoutParams();
+                if(lp==null){
+                    lp=new LayoutParams(size,size);
+                }
+
+                c.setLayoutParams(lp);
+
+                c.layout(left, top, left +size, top + size);
+                MyImage mi=(MyImage)c;
+                load(context, mi,mi.getUrl());
                 left = left + size + gap;
             }
         } else {
@@ -152,8 +183,17 @@ public class NineView extends ViewGroup {
                     left = 0;
                     top = (size + gap) * (i / 3);
                 }
+
+                LayoutParams lp=c.getLayoutParams();
+                if(lp==null){
+                    lp=new LayoutParams(size,size);
+                }
+
+                c.setLayoutParams(lp);
+
                 c.layout(left, top, left + size, top + size);
-                load(context, (ImageView) c, c.getTag().toString());
+                MyImage mi=(MyImage)c;
+                load(context, mi,mi.getUrl());
                 left = left + size + gap;
             }
         }
@@ -184,6 +224,7 @@ public class NineView extends ViewGroup {
         }else if(c<l){
             for(int i=c;i<l;i++){
                 MyImage iv=new MyImage(context);
+                iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
                 if(touch!=null){
 
                     iv.setOnLongClickListener((View v)->{
@@ -203,34 +244,11 @@ public class NineView extends ViewGroup {
             n = n[n.length - 2].split("_");
             iv.setW(Integer.parseInt(n[n.length - 2]));
             iv.setH(Integer.parseInt(n[n.length - 1]));
-            iv.setTag(u);
+            //iv.setTag(u);
+            iv.setUrl(u);
             iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            iv.setImageResource(R.drawable.holder);
+           // iv.setImageResource(R.drawable.holder);
         }
-        /*removeAllViews();
-
-        for (String u : url) {
-            Log.i("tag", u);
-            MyImage iv = new MyImage(context);
-            String[] n = u.split("\\.");
-            n = n[n.length - 2].split("_");
-            iv.setW(Integer.parseInt(n[n.length - 2]));
-            iv.setH(Integer.parseInt(n[n.length - 1]));
-            iv.setTag(u);
-            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            iv.setImageResource(R.drawable.holder);
-            if(touch!=null){
-
-                iv.setOnLongClickListener((View v)->{
-                    return touch.OnLongClick(v);
-                });
-
-                iv.setOnClickListener((View v)->{touch.OnClick(v);});
-            }
-
-            addView(iv);*/
-
-
         //}
     }
 
@@ -255,6 +273,16 @@ public class NineView extends ViewGroup {
         private int w;
 
         private int h;
+
+        private String url;
+
+        public String getUrl() {
+            return url;
+        }
+
+        public void setUrl(String url) {
+            this.url = url;
+        }
 
         public MyImage(Context context) {
             this(context, null);

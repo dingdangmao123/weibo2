@@ -51,6 +51,8 @@ public class Post extends Base {
     String weibo="";
     Adapter adapter;
 
+    int w=0;
+
     final int IMAGE = 0;
 
     boolean ok=false;
@@ -67,7 +69,6 @@ public class Post extends Base {
             MultiImageSelector.create().count(9 - url.size())
                     .start(this, IMAGE);
         });
-
     }
 
     @OnTextChanged(R.id.text)
@@ -87,24 +88,27 @@ public class Post extends Base {
         adapter = new Adapter(url, this);
         container.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
         container.setAdapter(adapter);
-
-        box();
+        //box();
 
     }
 
     void box() {
         Pool.run(() -> {
+
+            Log.i("tag","box");
             File f = new File(getCacheDir(), "box");
             if (!f.exists())
                 return;
+
+            Log.i("tag","box2");
             try {
                 ObjectInputStream in = new ObjectInputStream(new FileInputStream(f));
                 inner ins = (inner) in.readObject();
-                text.setText(ins.text);
                 url.clear();
                 url.addAll(ins.getUrl());
                 f.delete();
                 UI(() -> {
+                    text.setText(ins.text);
                     adapter.notifyDataSetChanged();
                 });
 
@@ -133,32 +137,30 @@ public class Post extends Base {
         }
 
 
+        Pool.run(()->{
 
-        Pool.run(() -> {
+                HashMap<String, String> map = new HashMap<>();
+                map.put("token", Token.getToken());
+                map.put("text", weibo);
 
-            HashMap<String, String> map = new HashMap<>();
-            map.put("token", Token.token);
-            map.put("text", weibo);
-
-            final SysMsg r = URLService.upload("upload.php", map, url, SysMsg.class);
-            if(r!=null) {
-                UI(() -> {
-                    T.show(Post.this, r.getMsg());
-                });
-            }
-
-            if (r!=null&&!r.getCode().equals(Config.SUCCESS)) {
-
-                inner ins = new inner(weibo, url);
-                try {
-                    ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(getCacheDir(), "box")));
-                    out.writeObject(ins);
-                    out.close();
-                } catch (Exception e) {
-
+                final SysMsg r = URLService.upload("upload.php", map, url, SysMsg.class);
+                if(r!=null) {
+                    UI(() -> {
+                        T.show(Post.this, r.getMsg());
+                    });
                 }
-            }
 
+                if (r!=null&&!r.getCode().equals(Config.SUCCESS)) {
+
+                    inner ins = new inner(weibo, url);
+                    try {
+                        ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(new File(getCacheDir(), "box")));
+                        out.writeObject(ins);
+                        out.close();
+                    } catch (Exception e) {
+
+                    }
+                }
         });
 
         finish();
@@ -179,6 +181,19 @@ public class Post extends Base {
     }
 
     @Override
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus&&w==0)
+        {
+          w=container.getWidth();
+          adapter.setW(w);
+          box();
+          Log.i("tag","onWindowFocusChanged");
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -192,6 +207,7 @@ public class Post extends Base {
                     return;
                 }
                 url.addAll(t);
+                adapter.setW(w);
                 adapter.notifyDataSetChanged();
 
             }
@@ -214,12 +230,26 @@ public class Post extends Base {
                 out.writeObject(ins);
                 out.close();
             } catch (Exception e) {
-
+                Log.i("tag",e.toString());
             }
         });
     }
 
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        weibo=text.getText().toString();
+        if(weibo.length()==0&&url.size()==0)
+            return ;
+
+        outState.putString("weibo",weibo);
+    }
+
     static class Adapter extends RecyclerView.Adapter<Adapter.SnapViewHolder> {
+
+        private int w=0;
 
         private Context context;
 
@@ -233,12 +263,22 @@ public class Post extends Base {
             this.context = context;
         }
 
+        public void setW(int w){
+            this.w=w;
+        }
+
         @Override
         public SnapViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
-            View view = LayoutInflater.from(context).inflate(R.layout.griditem, parent, false);
+            final int gap=4;
+            ViewGroup.MarginLayoutParams lp=new  ViewGroup.MarginLayoutParams((w-gap*8)/4,(w-gap*8)/4);
+            lp.setMargins(0,gap,gap,gap);
+            ImageView iv=new ImageView(context);
+            iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-            final SnapViewHolder h = new SnapViewHolder(view);
+            iv.setLayoutParams(lp);
+
+            final SnapViewHolder h = new SnapViewHolder(iv);
 
             h.iv.setOnLongClickListener((View v) -> {
                 int pos = h.getAdapterPosition();
@@ -250,16 +290,11 @@ public class Post extends Base {
             h.iv.setOnClickListener((View v)->{
 
                 int p = h.getAdapterPosition();
-                //int cur=((Post)context).container.indexOfChild(v);
-                //Log.i("tag",cur+"");
                 StringBuffer sb=new StringBuffer();
-
                 for(int i=0;i<url.size();i++)
                     sb.append(url.get(i)+",");
 
                 sb.deleteCharAt(sb.length()-1);
-
-                Log.i("tag",sb.toString());
 
                 Intent i=new Intent(context,Photo.class);
                 Bundle b=new Bundle();
@@ -271,15 +306,14 @@ public class Post extends Base {
                 context.startActivity(i);
 
             });
-
-
             return h;
         }
 
         @Override
         public void onBindViewHolder(final SnapViewHolder h, final int position) {
             Pool.run(() -> {
-                final Bitmap bit = Compress.decodeFile(url.get(position), 100, 100);
+                ViewGroup.LayoutParams lp=h.iv.getLayoutParams();
+                final Bitmap bit = Compress.decodeFile(url.get(position), lp.width, lp.height);
                 ((Activity) context).runOnUiThread(() -> {
                     h.iv.setImageBitmap(bit);
                 });
@@ -297,7 +331,7 @@ public class Post extends Base {
 
             public SnapViewHolder(View itemView) {
                 super(itemView);
-                iv = (ImageView) itemView.findViewById(R.id.iv);
+                iv = (ImageView)itemView;
 
             }
         }

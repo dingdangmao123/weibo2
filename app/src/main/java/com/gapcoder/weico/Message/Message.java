@@ -157,7 +157,7 @@ public class Message extends Base {
     public  void getMessage() {
         Pool.run(()->{
 
-                String url ="message.php?token=" + Token.token;
+                String url ="message.php?token=" + Token.getToken();
                 SysMsg t = URLService.get(url,  MessageModel.class);
                 Log.i("tag", url);
                 if (!check(t)) {

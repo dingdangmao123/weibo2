@@ -100,9 +100,9 @@ public class Image {
 
     public static void getFromDisk(Activity context, Runnable ins, ImageView iv, String url, int w, int h) {
         Pool.run(() -> {
-            Log.i("tag",url);
-            Bitmap bit=getInstance(context).get("big"+url);
-            if(bit==null){
+            Log.i("tag", url);
+            Bitmap bit = getInstance(context).get("big" + url);
+            if (bit == null) {
                 File f = new File(
                         DiskLRU.getCacheDir(context) + File.separator + url);
                 if (!f.exists()) {
@@ -114,11 +114,11 @@ public class Image {
                     }
                 }
                 bit = Compress.decodeFile(f.getAbsolutePath(), w, h);
-                if(bit!=null)
-                    getInstance(context).put("big"+url,bit);
+                if (bit != null)
+                    getInstance(context).put("big" + url, bit);
             }
-            if(bit!=null) {
-                Bitmap b=bit;
+            if (bit != null) {
+                Bitmap b = bit;
                 ((Activity) context).runOnUiThread(() -> {
                     iv.setImageBitmap(b);
                     ins.run();
@@ -230,9 +230,6 @@ public class Image {
         pool.execute(() -> {
 
             try {
-
-                //if(get(context,url))
-
                 if (Curl.getImage(url, out))
                     edit.commit();
                 else
@@ -259,28 +256,37 @@ public class Image {
 
     public static void down(Context context, ImageView iv, String url, int w, int h) {
 
-        Pool.run(() -> {
-            Log.i("tag",url);
-            Bitmap bit=getInstance(context).get(url);
-            if(bit==null){
-                File f = new File(
-                        DiskLRU.getCacheDir(context) + File.separator + url);
-                if (!f.exists()) {
-                    try {
-                        f.createNewFile();
-                        Curl.getImage(Config.photo + url, new FileOutputStream(f));
-                    } catch (Exception e) {
-                        Log.i("tag", e.toString());
-                    }
+        if (iv.getTag() != null && url.equals(iv.getTag().toString()))
+            return;
+        iv.setImageResource(R.drawable.holder);
+        iv.setTag(url);
+        Bitmap bit = getInstance(context).get(url);
+        if (bit != null)
+            iv.setImageBitmap(bit);
+        Pool.run2(() -> {
+            Log.i("tag", url);
+            // Bitmap bit=getInstance(context).get(url);
+            // if(bit==null){
+            Bitmap bbit;
+            File f = new File(
+                    DiskLRU.getCacheDir(context) + File.separator + url);
+            if (!f.exists()) {
+                try {
+                    f.createNewFile();
+                    Curl.getImage(Config.photo + url, new FileOutputStream(f));
+                } catch (Exception e) {
+                    Log.i("tag", e.toString());
                 }
-                bit = Compress.decodeFile(f.getAbsolutePath(), w, h);
-                if(bit!=null)
-                    getInstance(context).put(url,bit);
             }
-            if(bit!=null) {
-                Bitmap b=bit;
+            bbit = Compress.decodeFile(f.getAbsolutePath(), w, h);
+            if (bbit != null)
+                getInstance(context).put(url, bbit);
+            // }
+            if (bbit != null) {
+                Bitmap b = bbit;
                 ((Activity) context).runOnUiThread(() -> {
-                    iv.setImageBitmap(b);
+                    if (iv.getTag().equals(url))
+                        iv.setImageBitmap(b);
                 });
 
             }

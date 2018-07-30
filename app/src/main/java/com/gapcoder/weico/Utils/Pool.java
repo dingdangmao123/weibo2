@@ -10,9 +10,19 @@ import java.util.concurrent.Executors;
  */
 
 public class Pool {
+
     private static ExecutorService pool= Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    private static ExecutorService task=Executors.newFixedThreadPool(2);
 
     public static  void run(Runnable r){
+        try {
+            task.execute(r);
+        }catch(Exception e){
+            Log.i("tag",e.toString());
+        }
+    }
+
+    public static void run2(Runnable r){
         try {
             pool.execute(r);
         }catch(Exception e){

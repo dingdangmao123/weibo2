@@ -10,12 +10,18 @@ import com.squareup.leakcanary.LeakCanary;
  */
 public class App extends Application {
 
+    public Thread.UncaughtExceptionHandler handler;
+
+    public static App ins;
+
     @Override
     public void onCreate() {
         super.onCreate();
+        ins=this;
         LeakCanary.install(this);
-        CrashHandler ins=new CrashHandler(this);
-        Thread t=Thread.currentThread();
-        t.setUncaughtExceptionHandler(ins);
+       // CrashHandler ins=new CrashHandler(this);
+       //// Thread t=Thread.currentThread();
+      //  handler=t.getUncaughtExceptionHandler();
+      //  t.setUncaughtExceptionHandler(ins);
     }
 }

@@ -65,7 +65,7 @@ public class TitleFG extends BaseFG {
 
 
     public TitleFG() {
-
+        super();
     }
 
     View init(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -76,7 +76,7 @@ public class TitleFG extends BaseFG {
     public void CreateView(LayoutInflater inflater, ViewGroup container,
                            Bundle savedInstanceState, View v) {
 
-        search.setIconified(false);
+       // search.setIconified(false);
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override public boolean onQueryTextSubmit(String s) {
                 Intent i=new Intent(getActivity(),Title.class);
@@ -95,10 +95,6 @@ public class TitleFG extends BaseFG {
 
             @Override
             public void onTagClick(int position, String text) {
-
-               //T.show2(getActivity(),data.get(position).getId());
-
-
                 int id=data.get(position).getId();
                 Log.i("tag",id+"");
                 Intent i=new Intent(getActivity(),Title.class);
@@ -107,7 +103,6 @@ public class TitleFG extends BaseFG {
                 b.putString("title",text);
                 i.putExtras(b);
                 startActivity(i);
-
             }
 
             @Override
@@ -123,14 +118,9 @@ public class TitleFG extends BaseFG {
 
         Refresh();
     }
-
-
     public void Refresh() {
 
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
-
+        Pool.run(()->{
                 final SysMsg m = URLService.get("title.php", TitleModel.class);
                 if(!m.getCode().equals("OK"))
                 {
@@ -145,22 +135,16 @@ public class TitleFG extends BaseFG {
 
                 data.addAll(t);
 
-
                for(int  i=0;i<data.size();i++){
                    Log.i("tag",data.get(i).getId()+" "+data.get(i).getId());
                }
-
-
                 String[] s=new String[t.size()];
-
                 for(int i =0;i<s.length;i++)
                     s[i]=t.get(i).getTitle();
 
                 UI(()->{
                     tag.setTags(s);
                 });
-
-            }
         });
     }
 

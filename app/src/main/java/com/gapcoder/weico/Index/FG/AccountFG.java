@@ -86,6 +86,7 @@ public class AccountFG extends BaseFG {
     boolean flag=false;
 
 
+
     @OnClick(R.id.face)
     void select(){
         ISNav.getInstance().toListActivity(this, config,FACE);
@@ -176,30 +177,26 @@ public class AccountFG extends BaseFG {
 
     void post(final List<String> url){
 
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
+        Pool.run(()->{
                 HashMap<String, String> map = new HashMap<>();
-                map.put("token", Token.token);
+                map.put("token", Token.getToken());
                 map.put("key","face");
                 final SysMsg r = URLService.upload("face.php", map, url, SysMsg.class);
                 if (!check(r, null)) {
                     return;
                 }
                 Image.delete(getActivity(),Config.face+oldurl);
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
-
+                UI(()->{
                         T.show(getActivity(), r.getMsg());
                         Refresh();
-                    }
                 });
-            }
         });
     }
 
     public AccountFG() {
+
+        super();
+        Log.i("tag","AccountFG");
         ISNav.getInstance().init(new ImageLoader() {
             @Override
             public void displayImage(Context context, String path, ImageView imageView) {
@@ -224,57 +221,41 @@ public class AccountFG extends BaseFG {
     }
 
     View init(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.i("tag","Account init");
         return inflater.inflate(R.layout.fragment_account_fg, container, false);
     }
 
     @Override
-    public void CreateView(LayoutInflater inflater, ViewGroup container,
-                           Bundle savedInstanceState, View v) {
-
-    }
-    @Override
     public void onResume() {
         super.onResume();
+        Log.i("tag","onResume account");
         if(!flag)
         {
             flag=true;
             Refresh();
-
         }
     }
 
-
     void Refresh() {
-        Pool.run(new Runnable() {
-            @Override
-            public void run() {
-                String url="account.php?token="+ Token.token;
+        Pool.run(()->{
+                String url="account.php?token="+ Token.getToken();
                 final SysMsg m = URLService.get(url, UserModel.class);
                 Log.i("tag",url);
                 if(!(m instanceof UserModel))
                     return ;
                 user= ((UserModel) m).getInner();
                 oldurl=user.getFace();
-
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
+                UI(()->{
                         name.setText(user.getName());
                         fans.setText(String.valueOf(user.getFans()));
                         care.setText(String.valueOf(user.getCare()));
                         sign.setText(user.getSign());
                         place.setText(user.getPlace());
-                    }
                 });
                 final Bitmap bit = Curl.getImage(Config.face+user.getFace());
-
-                UI(new Runnable() {
-                    @Override
-                    public void run() {
+                UI(()->{
                         face.setImageBitmap(bit);
-                    }
                 });
-            }
         });
     }
 
