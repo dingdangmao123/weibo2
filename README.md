@@ -1,4 +1,4 @@
-# Weibo
+# Weico
  
 - 这是一个简单的Android微博客户端，采用ButterKnife，OKHttp框架
  
@@ -39,7 +39,11 @@
 
 - @，评论，点赞等消息写入MySQL，再同步至Redis消息队列，通过Java Netty框架构建NIO服务器，与客户端保持长连接，提供实时的消息提醒，目前只在首页提供红点提示，也可在全局添加Notification通知；
 
-- 图片九宫格采用的是第三方控件，布局算法无非是1张，4张或者3列显示。
+- 图片九宫格采用的是自定义ViewGroup，布局算法无非是1张，4张或者3列显示。特别值得一提的是当一张图片时，需要按宽和高比例进行缩放，需要服务器返回图片信息。
+
+- 由于App可能会被强杀，导致静态变量空值，出现错误，因此不直接访问，结合SP持久化存取
+
+
 
 ## 主要框架
 - [ButterKnife](https://github.com/JakeWharton/butterknife)
@@ -54,5 +58,4 @@
 
 ## 运行效果
 
-![](https://github.com/dingdangmao123/weico/blob/master/demo/11.png) ![](https://github.com/dingdangmao123/weico/blob/master/demo/12.png) ![](https://github.com/dingdangmao123/weico/blob/master/demo/13.png) ![](https://github.com/dingdangmao123/weico/blob/master/demo/1.png) ![](https://github.com/dingdangmao123/weico/blob/master/demo/2.png) ![](https://github.com/dingdangmao123/weico/blob/master/demo/3.png) ![](https://github.com/dingdangmao123/weico/blob/master/demo/4.png) ![](https://github.com/dingdangmao123/weico/blob/master/demo/5.png) ![](https://github.com/dingdangmao123/weico/blob/master/demo/6.png) ![](https://github.com/dingdangmao123/weico/blob/master/demo/7.png) ![](https://github.com/dingdangmao123/weico/blob/master/demo/8.png) ![](https://github.com/dingdangmao123/weico/blob/master/demo/9.png)
-
+![](https://github.com/dingdangmao123/weico/blob/master/demo/11.png) ![](https://github.com/dingdangmao123/weico/blob/master/demo/12.png) 
