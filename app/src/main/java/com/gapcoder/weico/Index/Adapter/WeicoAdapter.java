@@ -160,7 +160,6 @@ public class WeicoAdapter extends RecyclerView.Adapter<WeicoAdapter.SnapViewHold
                 h.Grid.setVisibility(View.VISIBLE);
             }
         }
-
         h.face.setTag(face);
         Image.down((Activity) mContext, h.face,face);
     }

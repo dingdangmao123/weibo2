@@ -24,4 +24,9 @@ public class App extends Application {
       //  handler=t.getUncaughtExceptionHandler();
       //  t.setUncaughtExceptionHandler(ins);
     }
+
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+    }
 }

@@ -75,15 +75,25 @@ public class NineView extends ViewGroup {
             setMeasuredDimension(width, height);
             return;
         }
+
         if (url.size() == 1) {
 
             MyImage c = (MyImage) getChildAt(0);
             int w = c.getW();
             int h = c.getH();
 
+            if(h>singleH&&h/w>=3) {
+                int ww=w;
+                while(ww>singleW) {
+                    ww=ww/2;
+                    c.sample*=2;
+                }
 
+                this.h=singleH;
+                this.w=ww;
+                c.setL(true);
 
-            if(w<=singleW&&h<=singleH){
+            }else if(w<=singleW&&h<=singleH){
 
                 this.w=w;
                 this.h=h;
@@ -106,11 +116,9 @@ public class NineView extends ViewGroup {
 
                 if(k1-k2>e){
                         k1=k2;
-                    }
-
+                }
                  this.w=(int)(w*k1);
                  this.h=(int)(h*k1);
-
             }
 
             height=this.h;
@@ -118,23 +126,26 @@ public class NineView extends ViewGroup {
             if(lp==null){
                 lp=new LayoutParams(this.w,this.h);
             }
-
             c.setLayoutParams(lp);
 
         } else if (url.size() == 4) {
+
             width = widthSize;
             size = (width - 2 * gap) / 3;
             l = 2;
             height = size * 2 + gap;
+
+
         } else {
+
             width = widthSize;
             size = (width - 2 * gap) / 3;
             l = (url.size() - 1) / 3 + 1;
             height = size * l + (l - 1) * gap;
+
         }
         setMeasuredDimension(width, height);
     }
-
 
     @Override
     protected void onLayout(boolean changed, int l, int t, int r, int b) {
@@ -157,7 +168,7 @@ public class NineView extends ViewGroup {
             int left = 0;
             int top = 0;
             for (int i = 0; i < getChildCount(); i++) {
-                View c = getChildAt(i);
+                MyImage c = (MyImage) getChildAt(i);
                 if (i == 2) {
                     left = 0;
                     top = size + gap;
@@ -166,9 +177,10 @@ public class NineView extends ViewGroup {
                 if(lp==null){
                     lp=new LayoutParams(size,size);
                 }
-
                 c.setLayoutParams(lp);
-
+                if(c.h/c.w>=5){
+                    c.setL(true);
+                }
                 c.layout(left, top, left +size, top + size);
                 MyImage mi=(MyImage)c;
                 load(context, mi,mi.getUrl());
@@ -178,34 +190,32 @@ public class NineView extends ViewGroup {
             int left = 0;
             int top = 0;
             for (int i = 0; i < getChildCount(); i++) {
-                View c = getChildAt(i);
+                MyImage c = (MyImage) getChildAt(i);
                 if (i == 3 || i == 6) {
                     left = 0;
                     top = (size + gap) * (i / 3);
                 }
-
                 LayoutParams lp=c.getLayoutParams();
                 if(lp==null){
                     lp=new LayoutParams(size,size);
                 }
-
+                if(c.h/c.w>=5){
+                    c.setL(true);
+                }
                 c.setLayoutParams(lp);
-
                 c.layout(left, top, left + size, top + size);
                 MyImage mi=(MyImage)c;
                 load(context, mi,mi.getUrl());
                 left = left + size + gap;
             }
         }
-
-
     }
 
-    void load(Context context, ImageView iv, String u) {
+    void load(Context context, MyImage iv, String u) {
         if (this.url.size()== 1)
-            displayOneImage(getContext(), iv, u, w, h);
+            displayOneImage(getContext(), iv, u, w, h,iv.isL());
         else
-            displayOneImage(getContext(), iv, u,size,size);
+            displayOneImage(getContext(), iv, u,size,size,iv.isL());
     }
 
     public List<String> getUrl() {
@@ -264,17 +274,27 @@ public class NineView extends ViewGroup {
         return size;
     }
 
-    public void displayOneImage(Context context, ImageView iv, String url, int w, int h) {
-        Image.down(context,iv,url,w,h);
+    public void displayOneImage(Context context, ImageView iv, String url, int w, int h,boolean l) {
+        Log.i("tag",w+" "+h);
+        Image.down(context,iv,url,w,h,l);
+      //  Glide.with(context).load(Config.photo+url).placeholder(R.drawable.holder).override(w,h).into(iv);
     }
 
     static class MyImage extends ImageView {
 
         private int w;
-
         private int h;
-
+        private int sample=1;
+        boolean l=false;
         private String url;
+
+        public int getSample() {
+            return sample;
+        }
+
+        public void setSample(int sample) {
+            this.sample = sample;
+        }
 
         public String getUrl() {
             return url;
@@ -311,6 +331,14 @@ public class NineView extends ViewGroup {
 
         public void setH(int h) {
             this.h = h;
+        }
+
+        public boolean isL() {
+            return l;
+        }
+
+        public void setL(boolean l) {
+            this.l = l;
         }
     }
 

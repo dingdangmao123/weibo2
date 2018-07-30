@@ -84,12 +84,10 @@ public class Post extends Base {
 
     @Override
     public void init() {
-
         adapter = new Adapter(url, this);
         container.setLayoutManager(new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL));
         container.setAdapter(adapter);
         //box();
-
     }
 
     void box() {

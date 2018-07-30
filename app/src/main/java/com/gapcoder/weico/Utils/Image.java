@@ -254,7 +254,7 @@ public class Image {
         });
     }
 
-    public static void down(Context context, ImageView iv, String url, int w, int h) {
+    public static void down(Context context, ImageView iv, String url, int w, int h,boolean l) {
 
         if (iv.getTag() != null && url.equals(iv.getTag().toString()))
             return;
@@ -278,7 +278,11 @@ public class Image {
                     Log.i("tag", e.toString());
                 }
             }
-            bbit = Compress.decodeFile(f.getAbsolutePath(), w, h);
+            if(!l)
+                bbit = Compress.decodeFile(f.getAbsolutePath(), w, h);
+            else
+                bbit=Compress.decodeFile2(f.getAbsolutePath(),w,h);
+
             if (bbit != null)
                 getInstance(context).put(url, bbit);
             // }
